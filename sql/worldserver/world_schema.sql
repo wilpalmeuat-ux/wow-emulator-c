@@ -1,0 +1,160 @@
+-- WoW Emulator World Database Schema
+
+CREATE DATABASE IF NOT EXISTS world;
+USE world;
+
+-- Creature definitions
+CREATE TABLE IF NOT EXISTS creature_template (
+    entry MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    subname VARCHAR(100) DEFAULT '',
+    minlevel INT NOT NULL DEFAULT 1,
+    maxlevel INT NOT NULL DEFAULT 1,
+    health_min INT NOT NULL DEFAULT 100,
+    health_max INT NOT NULL DEFAULT 100,
+    mana_min INT NOT NULL DEFAULT 0,
+    mana_max INT NOT NULL DEFAULT 0,
+    faction INT UNSIGNED NOT NULL DEFAULT 0,
+    scale FLOAT NOT NULL DEFAULT 1.0,
+    rank TINYINT NOT NULL DEFAULT 0,
+    unit_flags INT NOT NULL DEFAULT 0,
+    dynamic_flags INT NOT NULL DEFAULT 0,
+    family TINYINT NOT NULL DEFAULT 0,
+    trainer_type TINYINT NOT NULL DEFAULT 0,
+    spell_id1 INT UNSIGNED DEFAULT 0,
+    spell_id2 INT UNSIGNED DEFAULT 0,
+    spell_id3 INT UNSIGNED DEFAULT 0,
+    spell_id4 INT UNSIGNED DEFAULT 0,
+   AIName VARCHAR(64) NOT NULL DEFAULT '',
+    script_name VARCHAR(64) NOT NULL DEFAULT '',
+    PRIMARY KEY (entry)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- GameObject templates
+CREATE TABLE IF NOT EXISTS gameobject_template (
+    entry MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    scriptName VARCHAR(64) NOT NULL DEFAULT '',
+    type INT UNSIGNED NOT NULL DEFAULT 0,
+    displayId INT UNSIGNED NOT NULL DEFAULT 0,
+    faction INT UNSIGNED NOT NULL DEFAULT 0,
+    flags INT UNSIGNED NOT NULL DEFAULT 0,
+    size FLOAT NOT NULL DEFAULT 1.0,
+    data0 INT NOT NULL DEFAULT 0,
+    data1 INT NOT NULL DEFAULT 0,
+    data2 INT NOT NULL DEFAULT 0,
+    data3 INT NOT NULL DEFAULT 0,
+    data4 INT NOT NULL DEFAULT 0,
+    data5 INT NOT NULL DEFAULT 0,
+    data6 INT NOT NULL DEFAULT 0,
+    data7 INT NOT NULL DEFAULT 0,
+    data8 INT NOT NULL DEFAULT 0,
+    data9 INT NOT NULL DEFAULT 0,
+    data10 INT NOT NULL DEFAULT 0,
+    data11 INT NOT NULL DEFAULT 0,
+    data12 INT NOT NULL DEFAULT 0,
+    data13 INT NOT NULL DEFAULT 0,
+    data14 INT NOT NULL DEFAULT 0,
+    data15 INT NOT NULL DEFAULT 0,
+    data16 INT NOT NULL DEFAULT 0,
+    data17 INT NOT NULL DEFAULT 0,
+    data18 INT NOT NULL DEFAULT 0,
+    data19 INT NOT NULL DEFAULT 0,
+    data20 INT NOT NULL DEFAULT 0,
+    data21 INT NOT NULL DEFAULT 0,
+    data22 INT NOT NULL DEFAULT 0,
+    data23 INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (entry)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Creature spawns
+CREATE TABLE IF NOT EXISTS creature (
+    guid INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id INT UNSIGNED NOT NULL,
+    map INT UNSIGNED NOT NULL DEFAULT 0,
+    position_x FLOAT NOT NULL DEFAULT 0,
+    position_y FLOAT NOT NULL DEFAULT 0,
+    position_z FLOAT NOT NULL DEFAULT 0,
+    orientation FLOAT NOT NULL DEFAULT 0,
+    spawntimesecs INT NOT NULL DEFAULT 0,
+    spawndist FLOAT NOT NULL DEFAULT 5.0,
+    currentwaypoint INT UNSIGNED NOT NULL DEFAULT 0,
+    curhealth INT UNSIGNED NOT NULL DEFAULT 1,
+    curmana INT UNSIGNED NOT NULL DEFAULT 0,
+    movementtype TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    npcflag INT UNSIGNED NOT NULL DEFAULT 0,
+    unit_flags INT NOT NULL DEFAULT 0,
+    script_name VARCHAR(64) NOT NULL DEFAULT '',
+    INDEX idx_map (map),
+    INDEX idx_id (id),
+    PRIMARY KEY (guid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- GameObject spawns
+CREATE TABLE IF NOT EXISTS gameobject (
+    guid INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id INT UNSIGNED NOT NULL,
+    map INT UNSIGNED NOT NULL DEFAULT 0,
+    position_x FLOAT NOT NULL DEFAULT 0,
+    position_y FLOAT NOT NULL DEFAULT 0,
+    position_z FLOAT NOT NULL DEFAULT 0,
+    orientation FLOAT NOT NULL DEFAULT 0,
+    rotation0 FLOAT NOT NULL DEFAULT 0,
+    rotation1 FLOAT NOT NULL DEFAULT 0,
+    rotation2 FLOAT NOT NULL DEFAULT 0,
+    rotation3 FLOAT NOT NULL DEFAULT 0,
+    spawntimesecs INT NOT NULL DEFAULT 0,
+    script_name VARCHAR(64) NOT NULL DEFAULT '',
+    INDEX idx_map (map),
+    INDEX idx_id (id),
+    PRIMARY KEY (guid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Custom scripts table (for word-based scripting)
+CREATE TABLE IF NOT EXISTS scripts (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(64) NOT NULL UNIQUE,
+    script_type TINYINT NOT NULL DEFAULT 0,
+    script_content TEXT NOT NULL,
+    INDEX idx_name (name),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Quest templates
+CREATE TABLE IF NOT EXISTS quest_template (
+    ID INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    QuestTitle VARCHAR(255) NOT NULL DEFAULT '',
+    Details TEXT NOT NULL,
+    Objectives TEXT NOT NULL,
+    CompletedText TEXT NOT NULL,
+    QuestDescription TEXT NOT NULL,
+    AreaDescription TEXT NOT NULL DEFAULT '',
+    RequestItemsText TEXT NOT NULL DEFAULT '',
+    OfferRewardText TEXT NOT NULL DEFAULT '',
+    StartScript INT NOT NULL DEFAULT 0,
+    CompleteScript INT NOT NULL DEFAULT 0,
+    -- ... (simplified)
+    PRIMARY KEY (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Gossip menus
+CREATE TABLE IF NOT EXISTS gossip_menus (
+    entry INT UNSIGNED NOT NULL DEFAULT 0,
+    text_id INT UNSIGNED NOT NULL DEFAULT 0,
+    script_name VARCHAR(64) NOT NULL DEFAULT '',
+    PRIMARY KEY (entry, text_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS gossip_menu_option (
+    menu_id INT UNSIGNED NOT NULL DEFAULT 0,
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    option_icon TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    option_text VARCHAR(255) NOT NULL DEFAULT '',
+    option_id INT UNSIGNED NOT NULL DEFAULT 0,
+    npcflags INT UNSIGNED NOT NULL DEFAULT 0,
+    action INT UNSIGNED NOT NULL DEFAULT 0,
+    action_text_id INT NOT NULL DEFAULT 0,
+    script_name VARCHAR(64) NOT NULL DEFAULT '',
+    INDEX idx_menu_id (menu_id),
+    PRIMARY KEY (menu_id, id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

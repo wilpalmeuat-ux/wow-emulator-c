@@ -1,0 +1,59 @@
+// Sample WoW Emulator Script
+// This demonstrates the word/statement based scripting system
+
+// Greeting script for NPCs
+BEGIN greet_50001
+    sendmessage text="Welcome, brave adventurer! The realm needs your help."
+    castspell spell_id=4662
+END
+
+// Level up reward script
+BEGIN on_level_up
+    if condition="level >= 10"
+        sendmessage text="Congratulations! You are now eligible for rewards."
+        giveitem item_entry=6948 count=1
+        givegold amount=100000
+    else
+        sendmessage text="Keep grinding! You need more levels for rewards."
+    endif
+END
+
+// Quest turn-in script
+BEGIN quest_complete_12345
+    if condition="hasitem 12345 count=5"
+        removeitem item_entry=12345 count=5
+        giveitem item_entry=56789 count=1
+        sendmessage text="Thank you for completing the task!"
+        teleporteffect spell_id=35517
+    else
+        sendmessage text="You don't have enough items."
+    endif
+END
+
+// Boss encounter script
+BEGIN boss_encounter_10234
+    sendmessage text="You dare challenge me? Face your doom!"
+    setvariable damage_modifier=2.5
+    foreach player "in_range"
+        castspell spell_id=61632 target=args[0]
+    endfor
+END
+
+// Teleport script
+BEGIN teleport_darkportal
+    sendmessage text="Entering the Dark Portal..."
+    playsound sound_id=1400
+    fadeout duration=2000
+    teleport map_id=530 x=-1055.7 y=3041.9 z=-16.5
+    fadein duration=1000
+END
+
+// Item use script
+BEGIN on_item_use_22572
+    if condition="playerlevel >= 55"
+        castspell spell_id=23737
+        setvariable cooldown=3600
+    else
+        sendmessage text="You must be at least level 55 to use this item."
+    endif
+END

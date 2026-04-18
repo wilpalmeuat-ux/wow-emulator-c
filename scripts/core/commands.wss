@@ -1,0 +1,39 @@
+// commands.wss - Player command handlers
+global commandPrefix = "/"
+
+function cmd_teleport(playerGuid, args)
+    if args == ""
+        playerSendMessage(playerGuid, "Usage: /teleport <map> <x> <y> <z>")
+        return nil
+    end
+    log("Teleport command used by player " + playerGetName(playerGuid), "debug")
+end
+
+function cmd_level(playerGuid, args)
+    if args == ""
+        playerSendMessage(playerGuid, "Usage: /level <level>")
+        return nil
+    end
+    playerSetLevel(playerGuid, 80)
+    playerSendMessage(playerGuid, "Level set to 80!")
+end
+
+function cmd_spawn(playerGuid, args)
+    log("Spawn command: " + args, "debug")
+end
+
+function cmd_gm(playerGuid, args)
+    playerSendMessage(playerGuid, "GM commands are limited")
+end
+
+function cmd_announce(playerGuid, message)
+    log("[ANNOUNCE] " + message, "info")
+end
+
+function cmd_heal(playerGuid)
+    print("Healing player: " + playerGetName(playerGuid))
+end
+
+function cmd_godmode(playerGuid)
+    print("God mode enabled for: " + playerGetName(playerGuid))
+end

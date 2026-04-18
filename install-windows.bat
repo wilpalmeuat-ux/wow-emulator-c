@@ -1,0 +1,394 @@
+@echo off
+:: WoW 3.3.5a Emulator - Windows Auto-Install (MySQL + SQL)
+:: Downloads MySQL, installs silently, sets root pass, runs SQL
+:: Run as Administrator
+
+setlocal enabledelayedexpansion
+
+set RED=[91m
+set GREEN=[92m
+set YELLOW=[93m
+set CYAN=[96m
+set RESET=[0m
+
+set MYSQL_VERSION=8.0.39
+set MYSQL_DIR=C:\MySQL
+set MYSQL_BIN=%MYSQL_DIR%\mysql-8.0in
+set MYSQL_DATA=%MYSQL_DIR%\data
+set MYSQLInstaller=mysql-installer-community-8.0.39.0.msi
+set MYSQL_URL=https://dev.mysql.com/get/Downloads/MySQLInstaller/%MYSQLInstaller%
+
+set SCRIPT_DIR=%~dp0
+set INSTALL_DIR=%SCRIPT_DIR%
+set BUILD_DIR=%INSTALL_DIR%uild
+set DATA_DIR=%INSTALL_DIR%\data
+set SCRIPTS_DIR=%INSTALL_DIR%\scripts
+set SQL_DIR=%INSTALL_DIR%\sql
+set CONFIGS_DIR=%INSTALL_DIR%\configs
+
+goto :main
+
+:log
+echo %CYAN%[install]%RESET% %~1
+exit /b 0
+
+:ok
+echo %GREEN%[OK]%RESET%    %~1
+exit /b 0
+
+:warn
+echo %YELLOW%[WARN]%RESET%  %~1
+exit /b 0
+
+:fail
+echo %RED%[FAIL]%RESET%  %~1 >&2
+exit /b 1
+
+:check_prereqs
+call :log Checking prerequisites...
+where cmake >nul 2>&1
+if %errorlevel% neq 0 (
+    call :warn CMake not found. You will need to build the emulator manually.
+)
+where git >nul 2>&1
+if %errorlevel% neq 0 (
+    call :warn Git not found.
+)
+exit /b 0
+
+:create_dirs
+call :log Creating directory structure...
+if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
+if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
+if not exist "%DATA_DIR%" mkdir "%DATA_DIR%"
+if not exist "%SCRIPTS_DIR%" mkdir "%SCRIPTS_DIR%"
+if not exist "%SQL_DIR%" mkdir "%SQL_DIR%"
+if not exist "%CONFIGS_DIR%" mkdir "%CONFIGS_DIR%"
+call :ok Directories ready
+exit /b 0
+
+:download_mysql
+call :log Downloading MySQL %MYSQL_VERSION%...
+if exist "%SCRIPT_DIR%%MYSQLInstaller%" (
+    call :ok MySQL installer already downloaded
+    goto :install_mysql
+)
+call :log This may take a few minutes on slow connections...
+powershell -Command "Invoke-WebRequest -Uri '%MYSQL_URL%' -OutFile '%SCRIPT_DIR%%MYSQLInstaller%'"
+if %errorlevel% neq 0 (
+    call :fail Download failed. Check internet connection.
+    exit /b 1
+)
+call :ok Download complete
+exit /b 0
+
+:install_mysql
+call :log Installing MySQL %MYSQL_VERSION% silently...
+if exist "%MYSQL_BIN%\mysql.exe" (
+    call :ok MySQL already installed at %MYSQL_DIR%
+    goto :init_mysql
+)
+call :log Running MySQL installer (this may take 5-10 minutes)...
+msiexec /i "%SCRIPT_DIR%%MYSQLInstaller%" /quiet /norestart /log "%INSTALL_DIR%mysql_install.log" INSTALLDIR="%MYSQL_DIR%" Port=3306
+call :wait_installer
+if %errorlevel% neq 0 (
+    call :fail MySQL installation failed. Check %INSTALL_DIR%mysql_install.log
+    exit /b 1
+)
+call :ok MySQL installed successfully
+exit /b 0
+
+:wait_installer
+set /a waited=0
+:wait_loop
+timeout /t 5 /nobreak >nul
+set /a waited+=5
+if %waited% gtr 600 (
+    if exist "%MYSQL_BIN%\mysql.exe" exit /b 0
+    exit /b 1
+)
+if exist "%MYSQL_BIN%\mysql.exe" exit /b 0
+goto :wait_loop
+
+:init_mysql
+call :log Initializing MySQL data directory...
+if exist "%MYSQL_DATA%\my.ini" (
+    call :ok MySQL data directory already initialized
+    goto :configure_mysql
+)
+"%MYSQL_BIN%\mysqld.exe" --initialize-insecure --datadir="%MYSQL_DATA%" --console
+if %errorlevel% neq 0 (
+    call :fail MySQL initialization failed
+    exit /b 1
+)
+call :ok MySQL data directory initialized
+exit /b 0
+
+:start_mysql
+call :log Starting MySQL service...
+net start MySQL80 >nul 2>&1
+if %errorlevel% equ 0 (
+    call :ok MySQL service started
+    goto :configure_mysql
+)
+start /b "%MYSQL_BIN%\mysqld.exe" --console --datadir="%MYSQL_DATA%" --port=3306
+timeout /t 10 /nobreak >nul
+if exist "%MYSQL_DATA%\my.ini" (
+    call :ok MySQL started manually
+    goto :configure_mysql
+)
+call :warn Could not start MySQL service. You may need to start it manually.
+exit /b 0
+
+:configure_mysql
+call :log Configuring MySQL root password...
+"%MYSQL_BIN%\mysql.exe" -u root --socket=mysql.sock -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'wowemulator123'; FLUSH PRIVILEGES;" 2>nul
+if %errorlevel% equ 0 (
+    call :ok Root password set
+) else (
+    call :warn Could not set password (may already be set or different auth)
+)
+"%MYSQL_BIN%\mysql.exe" -u root -pwowemulator123 -e "CREATE DATABASE IF NOT EXISTS wow_emulator CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci; CREATE USER IF NOT EXISTS 'wowuser'@'localhost' IDENTIFIED BY 'wowpass123'; GRANT ALL PRIVILEGES ON wow_emulator.* TO 'wowuser'@'localhost'; FLUSH PRIVILEGES;" 2>nul
+if %errorlevel% equ 0 (
+    call :ok Database 'wow_emulator' created and user 'wowuser' configured
+) else (
+    call :warn Could not create database (MySQL may need manual configuration)
+)
+exit /b 0
+
+:create_sql
+call :log Creating SQL schema...
+set SCHEMA_FILE=%SQL_DIR%\schema.sql
+if exist "%SCHEMA_FILE%" (
+    call :ok SQL schema already exists
+    goto :install_sql
+)
+(
+echo -- WoW 3.3.5a Emulator Database Schema
+echo -- Generated by install-windows.bat
+echo.
+echo CREATE DATABASE IF NOT EXISTS wow_emulator;
+echo USE wow_emulator;
+echo.
+echo CREATE TABLE IF NOT EXISTS accounts ^(
+echo     id INT PRIMARY KEY AUTO_INCREMENT,
+echo     username VARCHAR^(32^) NOT NULL UNIQUE,
+echo     password_hash VARCHAR^(128^) NOT NULL,
+echo     email VARCHAR^(255^) DEFAULT '',
+echo     last_ip VARCHAR^(45^) DEFAULT '127.0.0.1',
+echo     last_login INT DEFAULT 0,
+echo     expansion INT DEFAULT 2,
+echo     banned INT DEFAULT 0,
+echo     created_at INT DEFAULT ^(UNIX_TIMESTAMP^)
+echo ^);
+echo.
+echo CREATE TABLE IF NOT EXISTS characters ^(
+echo     guid INT PRIMARY KEY AUTO_INCREMENT,
+echo     name VARCHAR^(32^) NOT NULL,
+echo     race INT DEFAULT 1, class INT DEFAULT 1,
+echo     level INT DEFAULT 1, xp INT DEFAULT 0, money BIGINT DEFAULT 0,
+echo     position_x FLOAT DEFAULT 0, position_y FLOAT DEFAULT 0,
+echo     position_z FLOAT DEFAULT 0, orientation FLOAT DEFAULT 0,
+echo     map_id INT DEFAULT 0, zone_id INT DEFAULT 0,
+echo     account_id INT DEFAULT 0, online INT DEFAULT 0,
+echo     created_at INT DEFAULT ^(UNIX_TIMESTAMP^)
+echo ^);
+echo.
+echo CREATE TABLE IF NOT EXISTS creature_templates ^(
+echo     entry INT PRIMARY KEY,
+echo     name VARCHAR^(100^) DEFAULT '',
+echo     minlevel INT DEFAULT 1, maxlevel INT DEFAULT 1,
+echo     health_min INT DEFAULT 100, health_max INT DEFAULT 100,
+echo     mana_min INT DEFAULT 0, mana_max INT DEFAULT 0,
+echo     faction INT DEFAULT 0, scale FLOAT DEFAULT 1.0,
+echo     display_id INT DEFAULT 0, flags INT DEFAULT 0,
+echo     script_name VARCHAR^(100^) DEFAULT ''
+echo ^);
+echo.
+echo CREATE TABLE IF NOT EXISTS creature_spawns ^(
+echo     guid INT PRIMARY KEY AUTO_INCREMENT,
+echo     id INT DEFAULT 0, map INT DEFAULT 0,
+echo     position_x FLOAT DEFAULT 0, position_y FLOAT DEFAULT 0,
+echo     position_z FLOAT DEFAULT 0, orientation FLOAT DEFAULT 0,
+echo     spawntime_secs INT DEFAULT 120
+echo ^);
+echo.
+echo CREATE TABLE IF NOT EXISTS world_state ^(
+echo     var_name VARCHAR^(100^) PRIMARY KEY,
+echo     var_value VARCHAR^(255^)
+echo ^);
+echo.
+echo CREATE TABLE IF NOT EXISTS script_bindings ^(
+echo     id INT PRIMARY KEY AUTO_INCREMENT,
+echo     event_type VARCHAR^(50^) NOT NULL,
+echo     script_file VARCHAR^(255^),
+echo     target_type VARCHAR^(20^) DEFAULT 'global',
+echo     target_id INT DEFAULT 0
+echo ^);
+echo.
+echo INSERT IGNORE INTO accounts ^(username, password_hash, expansion^) VALUES ^('test', '5e884898da28047d165d9317a16d8b1a0d7c28b4', 2^);
+echo.
+echo INSERT IGNORE INTO creature_templates ^(entry, name, minlevel, maxlevel, health_min, health_max, faction, display_id^) VALUES
+echo ^(1,'Orgrimmar Guard',1,5,80,100,85,1547^),
+echo ^(15,'Orgrimmar Grunt',5,10,150,200,85,1547^),
+echo ^(50,'Combat Trainer',50,55,5000,6000,35,357^),
+echo ^(999,'Stormwind Soldier',10,15,300,400,0,1547^),
+echo ^(9999,'World Boss',80,80,500000,500000,14,16946^),
+echo ^(1234,'KelThuzad',80,80,1000000,1000000,14,15928^),
+echo ^(5678,'Arcane Golem',60,65,50000,60000,14,16510^),
+echo ^(9001,'Dark Portal Guardian',70,75,200000,250000,14,16586^);
+echo.
+echo INSERT IGNORE INTO creature_spawns ^(id, map, position_x, position_y, position_z, orientation, spawntime_secs^) VALUES
+echo ^(1,0,-8949.0,-132.0,83.0,0.0,60^),
+echo ^(1,0,-8945.0,-130.0,83.0,1.0,60^),
+echo ^(15,0,-8920.0,-140.0,84.0,2.0,120^),
+echo ^(50,0,-8900.0,-145.0,85.0,0.5,300^),
+echo ^(999,1,-10806.0,284.0,35.0,0.0,60^),
+echo ^(9999,0,-8940.0,-120.0,83.5,0.0,3600^),
+echo ^(1234,0,-8945.0,-115.0,83.0,3.14,3600^),
+echo ^(5678,0,-8955.0,-125.0,83.0,1.5,600^),
+echo ^(9001,0,-8925.0,-135.0,83.0,0.0,600^);
+echo.
+echo INSERT IGNORE INTO world_state ^(var_name, var_value^) VALUES
+echo ^('server_name','WoW 3.3.5a Custom Server'^),
+echo ^('max_players','1000'^),
+echo ^('motd','Welcome to the WoW Emulator!'^);
+) > "%SCHEMA_FILE%"
+call :ok SQL schema created at %SCHEMA_FILE%
+exit /b 0
+
+:install_sql
+call :log Installing SQL schema into MySQL...
+if not exist "%SCHEMA_FILE%" (
+    call :fail Schema file not found: %SCHEMA_FILE%
+    exit /b 1
+)
+"%MYSQL_BIN%\mysql.exe" -u wowuser -pwowpass123 wow_emulator < "%SCHEMA_FILE%" 2>nul
+if %errorlevel% equ 0 (
+    call :ok SQL schema installed successfully
+    goto :create_config
+)
+"%MYSQL_BIN%\mysql.exe" -u root -pwowemulator123 wow_emulator < "%SCHEMA_FILE%" 2>nul
+if %errorlevel% equ 0 (
+    call :ok SQL schema installed successfully
+    goto :create_config
+)
+"%MYSQL_BIN%\mysql.exe" -u root wow_emulator < "%SCHEMA_FILE%" 2>nul
+if %errorlevel% equ 0 (
+    call :ok SQL schema installed successfully
+    goto :create_config
+)
+call :fail Could not connect to MySQL. Please run manually
+exit /b 1
+
+:create_config
+call :log Creating worldserver.conf...
+set CONF_FILE=%CONFIGS_DIR%\worldserver.conf
+if exist "%CONF_FILE%" (
+    call :ok Config already exists
+    goto :create_scripts
+)
+(
+echo # WoW 3.3.5a Emulator - Server Configuration
+echo # Generated by install-windows.bat
+echo.
+echo [worldserver]
+echo Port = 8085
+echo WorldName = "WoW 3.3.5a Custom Server"
+echo MaxPlayers = 5000
+echo ThreadCount = 4
+echo DataPath = "data/"
+echo.
+echo [authserver]
+echo Port = 3724
+echo BindIP = "0.0.0.0"
+echo.
+echo [database]
+echo Type = "mysql"
+echo Host = "127.0.0.1"
+echo Port = 3306
+echo Username = "wowuser"
+echo Password = "wowpass123"
+echo Database = "wow_emulator"
+echo.
+echo [scripting]
+echo LoadScripts = true
+echo ScriptPath = "scripts/"
+echo AutoLoad = true
+) > "%CONF_FILE%"
+call :ok Config written to %CONF_FILE%
+exit /b 0
+
+:create_scripts
+call :log Creating sample WSS scripts...
+set HELLO_WSS=%SCRIPTS_DIR%\hello_world.wss
+if not exist "%HELLO_WSS%" (
+    (
+    echo # Hello World - sample WSS script
+    echo # Word/Statement based scripting for WoW Emulator
+    echo.
+    echo ON PLAYER_JOIN:
+    echo     PRINT "Welcome to the server, {PLAYER_NAME}!"
+    echo     SET GLOBAL server_players_count = GLOBAL server_players_count + 1
+    echo     IF GLOBAL server_players_count ^> 10:
+    echo         PRINT "Server is getting crowded!"
+    echo     END
+    echo.
+    echo ON PLAYER_SAY:
+    echo     IF {MESSAGE} == "hello":
+    echo         PRINT "Player {PLAYER_NAME} said hello!"
+    echo         RESPOND "Greetings, {PLAYER_NAME}!"
+    echo     END
+    ) > "%HELLO_WSS%"
+)
+set BOSS_WSS=%SCRIPTS_DIR%oss_kelthuzad.wss
+if not exist "%BOSS_WSS%" (
+    (
+    echo # Kel'Thuzad Boss Script
+    echo.
+    echo ON NPCDeath:
+    echo     IF NPC_ID == 1234:
+    echo         PRINT "Kel'Thuzad has been slain!"
+    echo         SPAWN Creature 5678 at -8955 -125 83
+    echo         BROADCAST "Arcane Golem awakens..."
+    echo         GRANT_GOLD 50000
+    echo         GRANT_XP 100000
+    echo     END
+    ) > "%BOSS_WSS%"
+)
+call :ok Sample scripts created
+exit /b 0
+
+:main
+call :log WoW 3.3.5a Emulator - Windows Auto-Install
+call :log Install directory: %INSTALL_DIR%
+call :check_prereqs
+call :create_dirs
+call :download_mysql
+call :install_mysql
+call :init_mysql
+call :start_mysql
+call :configure_mysql
+call :create_sql
+call :install_sql
+call :create_config
+call :create_scripts
+echo.
+echo  %GREEN%===============================================%RESET%
+echo  %GREEN%   INSTALLATION COMPLETE!                     %RESET%
+echo  %GREEN%===============================================%RESET%
+echo.
+echo  MySQL Root Password: wowemulator123
+echo  WoW DB User: wowuser / wowpass123
+echo  Database: wow_emulator
+echo  Config: %CONF_FILE%
+echo  SQL: %SQL_DIR%\schema.sql
+echo.
+echo  %YELLOW%Next Steps:%RESET%
+echo  1. Build the emulator with Visual Studio
+echo  2. Copy build output to %INSTALL_DIR%
+echo  3. Run start-server.bat
+echo.
+echo  Default account: test / testpassword
+echo.
+pause

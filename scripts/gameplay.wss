@@ -1,0 +1,148 @@
+# gameplay.wss — Core gameplay hooks loaded at startup
+# These events fire automatically when game conditions are met
+
+# ── Server init ──
+event on_init {
+    log "WoW 3.3.5a Emulator initialized"
+    log "Word/Statement Scripting System ready"
+    log "Loading creature spawns from database..."
+}
+
+# ── Player enters world ──
+event on_player_login {
+    variable int pid = get_player_guid
+    variable string pname = get_player_name
+
+    log "Player logged in:"
+    log pname
+
+    # Welcome message
+    broadcast "Welcome to the WoW 3.3.5a Server!"
+    announce "Type .help for commands"
+
+    # Set starter zone
+    set_map 0
+    set_position -8949.0 -132.0 83.0 0.0
+}
+
+# ── Player levels up ──
+event on_level_up {
+    variable int level = get_level
+
+    log "Player leveled up to"
+    log level
+
+    if level == 10 {
+        broadcast "A player has reached level 10!"
+        give_title "Apprentice"
+    }
+
+    if level == 20 {
+        broadcast "A player has reached level 20!"
+        give_title "Journeyman"
+    }
+
+    if level == 30 {
+        broadcast "A player has reached level 30!"
+        give_title "Expert"
+    }
+
+    if level == 40 {
+        broadcast "A player has reached level 40!"
+        give_title "Artisan"
+    }
+
+    if level == 50 {
+        broadcast "A player has reached level 50!"
+        give_title "Master"
+    }
+
+    if level == 60 {
+        broadcast "A player has reached level 60!"
+        give_title "Grand Master"
+    }
+
+    if level == 70 {
+        broadcast "A player has reached level 70!"
+        announce "You are now max level for Burning Crusade!"
+    }
+}
+
+# ── Player says something in chat ──
+event on_say {
+    variable string msg = get_message
+
+    log "Player says:"
+    log msg
+
+    if msg == ".help" {
+        respond "Available commands: .help .info .who .stats .spawn"
+        respond ".level <n> .teleport <x> <y> <z> .heal .killme"
+    }
+
+    if msg == ".info" {
+        respond "WoW 3.3.5a Emulator"
+        respond "Custom Word/Statement Scripting Engine"
+        respond "Type .help for commands"
+    }
+
+    if msg == ".who" {
+        respond "Online players: 1"
+    }
+
+    if msg == ".stats" {
+        variable int hp = get_health
+        variable int mana = get_mana
+        variable int lvl = get_level
+        respond "Level:"
+        respond lvl
+        respond "HP:"
+        respond hp
+        respond "Mana:"
+        respond mana
+    }
+
+    if msg == ".heal" {
+        set_health max
+        respond "You have been healed!"
+    }
+
+    if msg == ".killme" {
+        die
+        respond "You have died."
+    }
+
+    if msg starts_with ".level" {
+        variable int lvl = extract_number msg
+        set_level lvl
+        respond "Level set to"
+        respond lvl
+    }
+
+    if msg starts_with ".spawn" {
+        variable int entry = extract_number msg
+        spawn_creature entry at -8949.0 -132.0 83.0 0.0
+        respond "Creature spawned!"
+    }
+
+    if msg == ".online" {
+        broadcast "There are currently 1 players online."
+    }
+}
+
+# ── Quest accepted ──
+event on_quest_accept {
+    variable int quest_id = get_quest_id
+    log "Quest accepted:"
+    log quest_id
+    announce "A player has accepted a quest!"
+}
+
+# ── Quest completed ──
+event on_quest_complete {
+    variable int quest_id = get_quest_id
+    log "Quest completed:"
+    log quest_id
+    give_xp 500
+    give_gold 100
+}

@@ -1,0 +1,21 @@
+// quests.wss - Quest scripts
+global activeQuests = 0
+
+function quest_accept(playerGuid, questId)
+    print("Player " + playerGetName(playerGuid) + " accepted quest " + questId)
+    playerSendMessage(playerGuid, "Quest accepted: " + questId)
+end
+
+function quest_complete(playerGuid, questId)
+    print("Player " + playerGetName(playerGuid) + " completed quest " + questId)
+    playerAddItem(playerGuid, 00000, 100)
+    playerSendMessage(playerGuid, "Quest completed! Reward granted.")
+end
+
+function quest_abandon(playerGuid, questId)
+    print("Player " + playerGetName(playerGuid) + " abandoned quest " + questId)
+end
+
+function quest_update(playerGuid, questId, objective, progress)
+    print("Quest update: " + playerGetName(playerGuid) + " - " + questId + " [" + objective + ": " + progress + "]")
+end

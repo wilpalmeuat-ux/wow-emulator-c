@@ -1,0 +1,40 @@
+# event_demo.txt — Demonstrates the word/event binding system
+# onDeath / onSpawn / onKill / onSay event triggers
+
+# ── Event: When a creature named 'boss_dragon' dies ──
+onDeath boss_dragon {
+    print "boss_dragon has been slain!"
+    broadcast "A world boss has fallen!"
+    spawn 9999 at -8940 -120 83 0 on map 0
+    announce "A new boss has spawned at Orgrimmar!"
+}
+
+# ── Event: When a creature named 'trainer' spawns ──
+onSpawn trainer {
+    print "Trainer NPC has spawned"
+    setlevel 50
+    sethealth 5000
+}
+
+# ── Event: When a player logs in ──
+onLogin player {
+    print "Player has logged in"
+    givexp 100
+    announce "Welcome to the server!"
+}
+
+# ── Event: When a player logs out ──
+onLogout player {
+    print "Player has logged out"
+}
+
+# ── Event: When player says something in chat ──
+onSay player {
+    print "Player said something"
+}
+
+# ── Event: When player talks to an NPC ──
+onGossip npc {
+    print "Player opened NPC gossip menu"
+    broadcast "A player is browsing the NPC menu"
+}

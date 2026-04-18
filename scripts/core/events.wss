@@ -1,0 +1,29 @@
+// events.wss - Core event handlers
+global enabled = true
+global eventCount = 0
+
+function onPlayerJoin(playerGuid, playerName)
+    print("Player joined: " + playerName)
+    log("Player " + playerName + " connected to the server", "info")
+    playerSendMessage(playerGuid, "Welcome to the server!")
+end
+
+function onPlayerLeave(playerGuid, playerName)
+    print("Player left: " + playerName)
+    log("Player " + playerName + " disconnected", "info")
+end
+
+function onServerStart()
+    print("Server started!")
+    log("WorldServer is now accepting connections", "info")
+end
+
+function onServerStop()
+    print("Server shutting down...")
+    log("WorldServer shutting down", "info")
+end
+
+function onPlayerDeath(playerGuid, killerName)
+    print("Player died: " + playerGetName(playerGuid))
+    log(playerGetName(playerGuid) + " was killed by " + killerName, "warn")
+end

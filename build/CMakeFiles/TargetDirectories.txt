@@ -1,0 +1,3 @@
+/home/workspace/wow-emulator/build/CMakeFiles/wow-emulator.dir
+/home/workspace/wow-emulator/build/CMakeFiles/edit_cache.dir
+/home/workspace/wow-emulator/build/CMakeFiles/rebuild_cache.dir

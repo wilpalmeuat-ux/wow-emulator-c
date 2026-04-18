@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>wowemulator</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).users.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).users.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/w34468 /w34545 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;mysql.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/w34468 /w34545 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;mysql.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;mysql.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;mysql.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- ═══════════════ SOURCE FILES ═══════════════ -->
+
+  <!-- Entry point (Windows) -->
+  <ItemGroup>
+    <ClCompile Include="src\main_win.c" />
+  </ItemGroup>
+
+  <!-- Scripting engine -->
+  <ItemGroup>
+    <ClCompile Include="src\scripting\script_engine.c" />
+    <ClCompile Include="src\scripting\wss_lexer.c" />
+    <ClCompile Include="src\scripting\wss_vm.c" />
+    <ClCompile Include="src\scripting\wss_value.c" />
+    <ClCompile Include="src\scripting\wss_wow_hooks.c" />
+    <ClCompile Include="src\scripting\wss_chunk.c" />
+    <ClCompile Include="src\scripting\wss_compiler.c" />
+    <ClCompile Include="src\scripting\wss_objectstore.c" />
+    <ClCompile Include="src\scripting\wss_scanner.c" />
+    <ClCompile Include="src\scripts\core\builtin_statements.c" />
+  </ItemGroup>
+
+  <!-- World server -->
+  <ItemGroup>
+    <ClCompile Include="src\worldserver\WorldServer.cpp" />
+    <ClCompile Include="src\worldserver\world_main.c" />
+    <ClCompile Include="src\worldserver\world_socket.c" />
+    <ClCompile Include="src\worldserver\Player.cpp" />
+  </ItemGroup>
+
+  <!-- Auth server -->
+  <ItemGroup>
+    <ClCompile Include="src\authserver\AuthServer.c" />
+    <ClCompile Include="src\authserver\auth_main.c" />
+    <ClCompile Include="src\authserver\auth_server.c" />
+  </ItemGroup>
+
+  <!-- Shared / common -->
+  <ItemGroup>
+    <ClCompile Include="src\shared\Database.c" />
+    <ClCompile Include="src\shared\Logging.c" />
+    <ClCompile Include="src\shared\Network.c" />
+    <ClCompile Include="src\shared\SRP6.c" />
+    <ClCompile Include="src\shared\ByteBuffer.c" />
+    <ClCompile Include="src\shared\BigNumber.c" />
+    <ClCompile Include="src\shared\Config\Config.c" />
+    <ClCompile Include="src\shared\update_mask.c" />
+    <ClCompile Include="src\shared\wow_packet.c" />
+    <ClCompile Include="src\shared\database.c" />
+    <ClCompile Include="src\shared\log.c" />
+  </ItemGroup>
+
+  <!-- Headers -->
+  <ItemGroup>
+    <ClInclude Include="include\scripting\script_engine.h" />
+    <ClInclude Include="include\scripting\wss_engine.h" />
+    <ClInclude Include="include\scripting\wss_vm.h" />
+    <ClInclude Include="include\scripting\wss_value.h" />
+    <ClInclude Include="include\scripting\wss_wow_hooks.h" />
+    <ClInclude Include="include\scripting\wss_chunk.h" />
+    <ClInclude Include="include\scripting\wss_compiler.h" />
+    <ClInclude Include="include\scripting\wss_objectstore.h" />
+    <ClInclude Include="include\scripting\wss_scanner.h" />
+    <ClInclude Include="include\scripting\wss.h" />
+    <ClInclude Include="include\scripting\word_script.h" />
+    <ClInclude Include="include\scripting\scripting.h" />
+    <ClInclude Include="include\scripting\ScriptEngine.h" />
+    <ClInclude Include="include\shared\Types.h" />
+    <ClInclude Include="include\shared\Database.h" />
+    <ClInclude Include="include\shared\Logging.h" />
+    <ClInclude Include="include\shared\Network.h" />
+    <ClInclude Include="include\shared\SRP6.h" />
+    <ClInclude Include="include\shared\ByteBuffer.h" />
+    <ClInclude Include="include\shared\BigNumber.h" />
+    <ClInclude Include="include\shared\Config.h" />
+    <ClInclude Include="include\shared\Opcodes.h" />
+    <ClInclude Include="include\shared\update_mask.h" />
+    <ClInclude Include="include\shared\wow_packet.h" />
+    <ClInclude Include="include\shared\shared.h" />
+    <ClInclude Include="include\shared\database.h" />
+    <ClInclude Include="include\shared\log.h" />
+    <ClInclude Include="include\shared\network.h" />
+    <ClInclude Include="include\shared\wow_world.h" />
+    <ClInclude Include="include\worldserver\WorldServer.h" />
+    <ClInclude Include="include\worldserver\WorldSocket.h" />
+    <ClInclude Include="include\worldserver\Player.h" />
+    <ClInclude Include="include\worldserver\world_server.h" />
+    <ClInclude Include="include\worldserver\worldserver.h" />
+    <ClInclude Include="include\worldserver\packet.h" />
+    <ClInclude Include="include\worldserver\update.h" />
+    <ClInclude Include="include\worldserver\database.h" />
+    <ClInclude Include="include\authserver\AuthServer.h" />
+    <ClInclude Include="include\authserver\AuthSession.h" />
+    <ClInclude Include="include\authserver\auth_server.h" />
+    <ClInclude Include="include\authserver\authserver.h" />
+    <ClInclude Include="include\world.h" />
+    <ClInclude Include="include\creature.h" />
+    <ClInclude Include="include\item.h" />
+    <ClInclude Include="include\player.h" />
+    <ClInclude Include="include\spell.h" />
+    <ClInclude Include="include\wow_script.h" />
+  </ItemGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

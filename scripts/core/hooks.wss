@@ -1,0 +1,40 @@
+// hooks.wss - Transaction hooks and triggers
+global hookCount = 0
+
+function onPlayerKill(playerGuid, targetGuid)
+    print(playerGetName(playerGuid) + " killed " + playerGetName(targetGuid))
+    log("PK: " + playerGetName(playerGuid) + " -> " + playerGetName(targetGuid), "debug")
+end
+
+function onItemPickup(playerGuid, itemEntry)
+    print("Player " + playerGetName(playerGuid) + " picked up item " + itemEntry)
+end
+
+function onQuestComplete(playerGuid, questId)
+    print("Player " + playerGetName(playerGuid) + " completed quest " + questId)
+    playerAddItem(playerGuid, 00000, 1)
+end
+
+function onSpellCast(playerGuid, spellId, targetGuid)
+    log("Spell " + spellId + " cast by " + playerGetName(playerGuid), "debug")
+end
+
+function onTradeRequest(playerGuid, targetGuid)
+    print("Trade request: " + playerGetName(playerGuid) + " -> " + playerGetName(targetGuid))
+end
+
+function onGuildCreate(playerGuid, guildName)
+    print("Guild created: " + guildName + " by " + playerGetName(playerGuid))
+end
+
+function onLevelUp(playerGuid, newLevel)
+    print("Player " + playerGetName(playerGuid) + " leveled up to " + newLevel)
+    playerSendMessage(playerGuid, "Congratulations! You are now level " + newLevel + "!")
+end
+
+function onPlayerChat(playerGuid, channel, message)
+    print("Chat [" + channel + "] " + playerGetName(playerGuid) + ": " + message)
+    if channel == "guild"
+        log("[GUILD] " + playerGetName(playerGuid) + ": " + message, "debug")
+    end
+end

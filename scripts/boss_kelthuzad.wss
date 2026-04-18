@@ -1,0 +1,78 @@
+# boss_kelthuzad.wss — Kel'Thuzad encounter script (Naxxramas)
+# Natural English word/statement-based AI
+
+# ── Spawn: Kel'Thuzad awakens ──
+event on_spawn {
+    log "Kel'Thuzad has risen!"
+    set_level 70
+    set_health 1000000
+    set_mana 500000
+    set_model 15928
+    set_faction 14
+    set_speed walk 2.5
+    set_speed run 7.0
+
+    log "Kel'Thuzad phase 1: Chain together!"
+}
+
+# ── Combat AI: fires every ~1 second while in combat ──
+event on_combat {
+    # Phase transitions
+    if get_health below 70 {
+        log "Kel'Thuzad: Do you realize your failures?"
+        cast "Frost Bolt" on random_player
+        cast "Frost Bolt" on random_player
+    }
+
+    if get_health below 50 {
+        log "Kel'Thuzad: At last, you have come to die!"
+        cast "Chain Lightning" on random_player
+        cast "Frost Bolt" on random_player
+
+        # Spawn adds at 50% HP
+        spawn_creature 9999 at -8941.5 -108.4 83.6 1.0
+        spawn_creature 9999 at -8943.0 -110.0 83.6 1.5
+        log "Minions spawned!"
+    }
+
+    if get_health below 30 {
+        log "Kel'Thuzad: Pray that you do not exceed my patience!"
+        cast "Shadow Fissure" on random_player
+        cast "Chain Lightning" on random_player
+        cast "Frost Bolt" on random_player
+    }
+
+    if get_health below 10 {
+        log "Kel'Thuzad: Master! I require assistance!"
+        cast "Explosion" on random_player
+        spawn_creature 9999 at -8941.5 -108.4 83.6 1.0
+        spawn_creature 9999 at -8943.0 -110.0 83.6 1.5
+        spawn_creature 9999 at -8945.0 -112.0 83.6 2.0
+    }
+}
+
+# ── Death: Kel'Thuzad defeated! ──
+event on_death {
+    log "Kel'Thuzad has been slain!"
+
+    # Broadcast to all players
+    broadcast "KEL'THUZAD HAS FALLEN!"
+    broadcast "The Forces of the Scourge retreat!"
+
+    # Massive loot drop
+    loot all drop 100000 gold
+    loot all give item 49855  # Trophy of the Crusade
+
+    # Despawn after delay
+    despawn delay 10000
+
+    # Respawn after 1 hour
+    log "Kel'Thuzad will respawn in 1 hour"
+}
+
+# ── On interact (gossip) ──
+event on_gossip {
+    log "Player opened Kel'Thuzad gossip"
+    respond "I serve the Lich King!"
+    respond "Glory to the Scourge!"
+}

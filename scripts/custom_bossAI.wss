@@ -1,0 +1,59 @@
+# Custom Boss AI Script - Kel'Thuzad
+# Word/statement-based scripting syntax
+
+event on_npc_spawn {
+    log "Kel'Thuzad has emerged from the fold!"
+    set_level 1 70
+    set_model 1 11008
+    set_faction 1 14
+    set_speed 1 walk 2.5
+    set_speed 1 run 2.0
+}
+
+event on_aggro {
+    log "Kel'Thuzad: Do you realize your failures?"
+    cast 1 "Frost Bolt" target random_player
+    spawn add npc_id 24584 x -8941.5 y -108.4 z 83.6 o 1.0
+}
+
+event on_death {
+    log "Kel'Thuzad has been slain!"
+    broadcast "Kel'Thuzud has been defeated!"
+    loot 1 drop 100 gold target killer
+    cast 1 "Explosion" target self
+    despawn 1 delay 5000
+}
+
+event on_combat {
+    if get_health 1 below 30 {
+        log "Kel'Thuzad is casting chain lightning!"
+        cast 1 "Chain Lightning" target random_player
+        spawn add npc_id 24584 x -8941.5 y -108.4 z 83.6 o 1.0
+    }
+    if get_health 1 below 10 {
+        log "Kel'Thuzad is desperate!"
+        cast 1 "Shadow Fissure" target random_player
+    }
+}
+
+# Phase 2 - Adds
+event on_health {
+    if get_health 1 below 45 {
+        log "Kel'Thuzad summons his guardians!"
+        spawn add npc_id 24584 count 4
+        cast 1 "Frost Blast" target random_player
+    }
+}
+
+# Custom function
+function spawn_mobs_around {
+    variable int count = get_arg 1
+    variable float x = get_arg 2
+    variable float y = get_arg 3
+    variable float z = get_arg 4
+    
+    loop count {
+        spawn npc_id 24584 x x y y z z o 0 map_id 1
+        log "Minion spawned"
+    }
+}

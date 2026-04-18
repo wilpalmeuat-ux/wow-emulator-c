@@ -1,0 +1,31 @@
+// ai.wss - NPC AI scripts
+global aiTickRate = 1000
+
+function ai_aggro(npcGuid, playerGuid)
+    print("NPC " + npcGuid + " aggroed player " + playerGetName(playerGuid))
+end
+
+function ai_attack(npcGuid, targetGuid)
+    print("NPC " + npcGuid + " attacking " + playerGetName(targetGuid))
+end
+
+function ai_roam(npcGuid)
+    print("NPC " + npcGuid + " is roaming")
+end
+
+function ai_flee(npcGuid, threatGuid)
+    print("NPC " + npcGuid + " fleeing from " + playerGetName(threatGuid))
+end
+
+function ai_death(npcGuid, killerGuid)
+    print("NPC " + npcGuid + " was killed by " + playerGetName(killerGuid))
+    log("NPC death: " + npcGuid + " killed by " + killerGuid, "debug")
+end
+
+function ai_respawn(npcGuid)
+    print("NPC " + npcGuid + " respawning")
+end
+
+function ai_cast(npcGuid, spellId, targetGuid)
+    print("NPC " + npcGuid + " casting spell " + spellId + " at " + playerGetName(targetGuid))
+end

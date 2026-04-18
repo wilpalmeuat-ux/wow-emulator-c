@@ -1,0 +1,13 @@
+// WoW Emulator Core Script
+event("player_spawn", fn(p) {
+    print("Player spawned: ", p.name)
+})
+
+event("player_levelup", fn(p, new_level) {
+    print(p.name, " leveled up to ", new_level)
+})
+
+cmd("shutdown", fn() {
+    print("Server shutdown initiated")
+    shutdown()
+})

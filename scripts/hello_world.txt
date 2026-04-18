@@ -1,0 +1,14 @@
+# hello_world.txt — Demo script showing the word/statement scripting system
+# Words are written as natural statements that the script engine parses
+
+print "WoW 3.3.5a Emulator Loaded!"
+print "Word/Statement Scripting System Active"
+
+log "Hello from the script engine"
+announce "Server is now online!"
+
+# Comment: spawn a creature using natural word syntax
+spawn 1 at -8949 -132 83 0 on map 0
+
+# Natural language-style statements
+print "Server ready on port 8085"

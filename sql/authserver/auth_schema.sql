@@ -1,0 +1,45 @@
+-- WoW Emulator Auth Database Schema
+
+CREATE DATABASE IF NOT EXISTS auth;
+USE auth;
+
+CREATE TABLE IF NOT EXISTS account (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(32) NOT NULL UNIQUE,
+    sha_pass_hash VARCHAR(64) NOT NULL,
+    email VARCHAR(255) NOT NULL DEFAULT '',
+    reg_mail VARCHAR(255) NOT NULL DEFAULT '',
+    joindate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_ip VARCHAR(15) NOT NULL DEFAULT '127.0.0.1',
+    last_attempt_ip VARCHAR(15) NOT NULL DEFAULT '127.0.0.1',
+    failed_logins INT UNSIGNED NOT NULL DEFAULT 0,
+    locked INT UNSIGNED NOT NULL DEFAULT 0,
+    lock_date INT UNSIGNED NOT NULL DEFAULT 0,
+    ban_reason VARCHAR(255) NOT NULL DEFAULT '',
+    ban_date INT UNSIGNED NOT NULL DEFAULT 0,
+    unban_date INT UNSIGNED NOT NULL DEFAULT 0,
+    realm_id INT UNSIGNED NOT NULL DEFAULT 0,
+    flag INT UNSIGNED NOT NULL DEFAULT 0,
+    timezone INT UNSIGNED NOT NULL DEFAULT 0,
+    -- Expansion flags (0=None, 1=TBC, 2=WotLK)
+    expansion INT UNSIGNED NOT NULL DEFAULT 2,
+    account_flags INT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    INDEX idx_username (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS realm_characters (
+    realmid INT UNSIGNED NOT NULL,
+    acctid INT UNSIGNED NOT NULL,
+    numchars TINYINT UNSIGNED NOT NULL,
+    PRIMARY KEY (realmid, acctid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS uptime (
+    realmid INT UNSIGNED NOT NULL,
+    starttime DATETIME NOT NULL,
+    uptime INT UNSIGNED NOT NULL,
+    startstring VARCHAR(64) NOT NULL,
+    version VARCHAR(15) NOT NULL,
+    PRIMARY KEY (realmid, starttime)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
