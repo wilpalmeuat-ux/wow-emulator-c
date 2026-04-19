@@ -1,4 +1,5 @@
 #include "scripting/wss_parser.h"
+#include "scripting/wss_lexer.h"
 #include "shared/log.h"
 #include <stdlib.h>
 #include <string.h>

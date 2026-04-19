@@ -2,20 +2,23 @@
 #ifndef WOW_LOG_H
 #define WOW_LOG_H
 
-#include <stdio.h>
+#include <stdarg.h>
 
-typedef enum { LOG_DEBUG=0, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL } LogLevel;
+typedef enum { LOG_TRACE=0, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL } LogLevel;
 
 extern LogLevel g_log_level;
 extern FILE* g_log_file;
 
-void log_init(const char* filename);
+void log_init(const char* path, LogLevel min_level);
+void log_shutdown(void);
 void log_set_level(LogLevel level);
-void log_msg(LogLevel level, const char* fmt, ...);
+void log_write(LogLevel level, const char* file, int line, const char* fmt, ...);
 
-/* Convenience macros -- these do NOT clash with Logging.h because
- * Logging.h defines LOG_DEBUG(...) as a do{} while(0) macro and
- * log.h defines log_msg() as a function.  Code should prefer
- * the Logging.h macros or call log_msg() directly. */
+#define LOG_TRACE(...) log_write(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_DEBUG(...) log_write(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_INFO(...)  log_write(LOG_INFO,  __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_WARN(...)  log_write(LOG_WARN,  __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_ERROR(...) log_write(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
+#define LOG_FATAL(...) log_write(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
 
 #endif
