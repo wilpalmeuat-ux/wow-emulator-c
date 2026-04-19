@@ -1,11 +1,35 @@
-/* ╔══════════════════════════════════════════════════════════════╗
-   ║  Scanner / Lexer — tokenises a .wss script into a token     ║
-   ║  stream.  Plain-English word-based scripting language.       ║
-   ╚══════════════════════════════════════════════════════════════╝ */
-
+/* WSS Scanner — tokenises .wss scripts into a token stream */
 #ifndef WSS_SCANNER_H
 #define WSS_SCANNER_H
-#include <scripting/wss_lexer.h>  /* use unified lexer; T_xxx are aliases */
+
+#include <scripting/wss_lexer.h>
+#include <stdint.h>
+
+/* ── Scanner (tokeniser) ── */
+typedef struct WssScanner {
+    const char* src;
+    size_t len;
+    size_t pos;
+    int line;
+    int col;
+    bool has_peek;
+    WssToken peek_tok;
+} WssScanner;
+
+void WssScanner_Init(WssScanner* s, const char* src, size_t len);
+void WssScanner_Delete(WssScanner* s);
+bool WssScanner_Next(WssScanner* s, WssToken* out);
+bool WssScanner_Peek(WssScanner* s, WssToken* out);
+bool WssScanner_Check(WssScanner* s, TokenType expected);
+bool WssScanner_Match(WssScanner* s, TokenType expected);
+
+bool WssScanner_IsWordChar(uint8_t c);
+bool WssScanner_IsDigit(uint8_t c);
+bool WssScanner_IsWhiteSpace(uint8_t c);
+void WssScanner_SkipWhitespace(WssScanner* s);
+void WssScanner_SkipComment(WssScanner* s);
+
+/* ── Token type aliases for the WSS parser/compiler ── */
 #define T_EOF       TK_EOF
 #define T_WORD      TK_IDENT
 #define T_STRING    TK_STRING
@@ -56,7 +80,6 @@
 #define T_ARROW     TK_ARROW
 #define T_COMMENT   TK_COMMENT
 #define T_NEWLINE   TK_NEWLINE
-#define T_EOF_      TK_EOF
 #define T_ERROR     TK_ERROR
 #define T_HASH      TK_HASH
 #define T_AT        TK_AT
@@ -65,27 +88,40 @@
 #define T_NOT       TK_NOT
 #define T_OR        TK_OR
 #define T_XOR       TK_XOR
-#define T_LBRACKET  TK_LBRACKET
-#define T_RBRACKET  TK_RBRACKET
-/* Backward compat for old scanner using T_KW_xxx style */
-#define T_KW_IF     TK_IF
-#define T_KW_ELSE   TK_ELSE
-#define T_KW_WHILE  TK_WHILE
-#define T_KW_FOR    TK_FOR
-#define T_KW_RETURN TK_RETURN
-#define T_KW_TRUE   TK_TRUE
-#define T_KW_FALSE  TK_FALSE
-#define T_KW_NIL    TK_NIL
+
+/* ── Backward compat: old scanner used T_KW_xxx style ── */
+#define T_KW_IF       TK_IF
+#define T_KW_ELSE     TK_ELSE
+#define T_KW_ELIF     TK_ELIF
+#define T_KW_WHILE    TK_WHILE
+#define T_KW_FOR      TK_FOR
+#define T_KW_RETURN   TK_RETURN
+#define T_KW_TRUE     TK_TRUE
+#define T_KW_FALSE    TK_FALSE
+#define T_KW_NIL      TK_NIL
 #define T_KW_FUNCTION TK_FUNCTION
-#define T_KW_END    TK_EOF
-#define T_KW_BREAK  TK_BREAK
+#define T_KW_END      TK_EOF
+#define T_KW_BREAK    TK_BREAK
 #define T_KW_CONTINUE TK_CONTINUE
-#define T_KW_LOCAL  TK_LOCAL
-#define T_KW_GLOBAL TK_GLOBAL
-#define T_KW_IN     TK_IN
-#define T_KW_VAR    TK_EOF
-#define T_KW_CONST  TK_EOF
-#define T_KW_NEW    TK_EOF
+#define T_KW_LOCAL    TK_LOCAL
+#define T_KW_GLOBAL   TK_GLOBAL
+#define T_KW_IN       TK_IN
+#define T_KW_SET      TK_EOF
+#define T_KW_GIVE     TK_EOF
+#define T_KW_TAKE     TK_EOF
+#define T_KW_SAY      TK_EOF
+#define T_KW_WHISPER  TK_EOF
+#define T_KW_TELEPORT TK_EOF
+#define T_KW_SPAWN    TK_EOF
+#define T_KW_DESPAWN  TK_EOF
+#define T_KW_SETFLAG  TK_EOF
+#define T_KW_CLEARFLAG TK_EOF
+#define T_KW_WAIT     TK_EOF
+#define T_KW_TIMER    TK_EOF
+#define T_KW_BROADCAST TK_EOF
+#define T_KW_COUNTDOWN TK_EOF
+#define T_KW_EVENT    TK_EOF
+
 #define T_IDENT     TK_IDENT
 #define T_NUMBER    TK_NUMBER
 #define T_STR       TK_STRING
@@ -94,7 +130,5 @@
 #define T_SAY       TK_EOF
 #define T_WHISPER   TK_EOF
 #define T_BROADCAST TK_EOF
-#define T_GLOBALMSG TK_EOF
-#define T_ZONEMSG   TK_EOF
-#define T_YELL      TK_EOF
+
 #endif /* WSS_SCANNER_H */
