@@ -14,9 +14,9 @@ typedef enum {
 } WssCompilerResult;
 
 typedef struct {
-    WssLexer    lex;
-    WssToken    current;
-    WssToken    previous;
+    Lexer    lex;
+    Token    current;
+    Token    previous;
     WssChunk    chunk;
     bool        had_error;
     const char* source_name;

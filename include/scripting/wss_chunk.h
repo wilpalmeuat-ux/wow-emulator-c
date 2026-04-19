@@ -24,7 +24,7 @@ typedef enum {
     OP_EXIT,
 } OpCode;
 
-typedef struct {
+typedef struct WssChunk {
     uint8_t*   code;
     int        count;
     int        capacity;

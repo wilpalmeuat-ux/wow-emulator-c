@@ -20,7 +20,7 @@ static const char* _tok_names[] = {
     "NEWLINE","COMMENT"
 };
 
-const char* tok_name(TokenType t) { return _tok_names[t]; }
+const char* tok_name(WssLexTokenType t) { return _tok_names[t]; }
 
 static int _is_alpha(int c) { return isalpha(c) || c == '_'; }
 static int _is_alnum(int c) { return isalnum(c) || c == '_'; }
@@ -31,7 +31,7 @@ static void _skip_ws(Lexer* L) {
     while (L->pos < L->len && isspace(L->src[L->pos]) && L->src[L->pos] != '\n') L->pos++;
 }
 
-static TokenType _kw(const char* s, int len) {
+static WssLexTokenType _kw(const char* s, int len) {
     if (len == 2 && strncmp(s, "if", 2) == 0) return TK_IF;
     if (len == 4) {
         if (strncmp(s, "else", 4) == 0) return TK_ELSE;
@@ -131,7 +131,7 @@ bool lex_next(Lexer* L, Token* out) {
         const char* s = L->src + L->pos;
         while (_is_alnum(_cur(L))) _adv(L);
         int len = L->src + L->pos - s;
-        TokenType tt = _kw(s, len);
+        WssLexTokenType tt = _kw(s, len);
         out->text.text = s;
         out->text.len = len;
         out->len = len;
