@@ -48,4 +48,4 @@ typedef uint64_t uint64;
 #define OPCODE_SMSG_MESSAGECHAT          0x00A8
 #define OPCODE_SMSG_UPDATEOBJECT         0x00A9
 #define OPCODE_CMSG_AUTOSTORE_BAG_ITEM    0x00BE
-#define OPCODE_CMSG_LOGOUT_COMPLETE       0x00DC
+/* duplicate removed — keep only 0x00DD above */

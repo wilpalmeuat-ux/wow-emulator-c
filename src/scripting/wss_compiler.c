@@ -49,7 +49,7 @@ static void statement(WssCompiler* comp) {
         advance(comp);
         expression(comp);
         int skip_jump = comp->chunk.count;
-        EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0); EMIT(0);
+        EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0, 0); EMIT(0, 0);
         if (comp->current.len == 1 && comp->current.text.text[0] == '{') {
             advance(comp); block(comp);
         }
@@ -67,7 +67,7 @@ static void statement(WssCompiler* comp) {
         int loop_start = comp->chunk.count;
         expression(comp);
         int exit_jump = comp->chunk.count;
-        EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0); EMIT(0);
+        EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0, 0); EMIT(0, 0);
         if (comp->current.len == 1 && comp->current.text.text[0] == '{') {
             advance(comp); block(comp);
         }
@@ -83,7 +83,7 @@ static void statement(WssCompiler* comp) {
         int body_start = comp->chunk.count;
         expression(comp);
         int check_jump = comp->chunk.count;
-        EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0); EMIT(0);
+        EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0, 0); EMIT(0, 0);
         if (comp->current.len == 1 && comp->current.text.text[0] == '{') {
             advance(comp); block(comp);
         }
@@ -144,7 +144,7 @@ static void statement(WssCompiler* comp) {
     if (tok_eq(t, "true", 4)) { advance(comp); EMIT(OP_LOAD_BOOL, 0); EMIT(1, 0); return; }
     if (tok_eq(t, "false", 5)) { advance(comp); EMIT(OP_LOAD_BOOL, 0); EMIT(0, 0); return; }
     if (tok_eq(t, "nil", 3)) { advance(comp); EMIT(OP_LOAD_NULL, 0); return; }
-    if (tok_eq(t, "if", 2)) { advance(comp); expression(comp); EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0); EMIT(0); return; }
+    if (tok_eq(t, "if", 2)) { advance(comp); expression(comp); EMIT(OP_JUMP_IF_FALSE, 0); EMIT(0, 0); EMIT(0, 0); return; }
     if (tok_is_ident(t)) {
         char name[256]; int nl = t->len < 255 ? t->len : 255;
         memcpy(name, t->text.text, nl); name[nl] = 0;
