@@ -37,26 +37,40 @@ if "%MYSQL_PATH%"=="" (
 
 echo [INFO] MySQL path: %MYSQL_PATH%
 
-REM Create build directory
-if not exist build mkdir build
+REM Clean stale build directory (important if downloaded from GitHub)
+if exist build (
+    echo [INFO] Cleaning old build directory...
+    rmdir /S /Q build
+)
+
+REM Create fresh build directory
+mkdir build
 cd build
 
-REM Configure with CMake
+REM Try Visual Studio 2022 first, then 2019
 echo [INFO] Running CMake...
-cmake .. -G "Visual Studio 17 2022" -A x64 -DMYSQL_DIR="%MYSQL_PATH%"
+cmake .. -G "Visual Studio 17 2022" -A x64 -DMYSQL_DIR="%MYSQL_PATH%" 2>nul
 if %ERRORLEVEL% neq 0 (
-    echo [ERROR] CMake configuration failed.
-    echo         Try: cmake .. -G "Visual Studio 16 2019" -A x64 -DMYSQL_DIR="%MYSQL_PATH%"
-    cd ..
-    pause
-    exit /b 1
+    echo [INFO] VS 2022 not found, trying VS 2019...
+    cmake .. -G "Visual Studio 16 2019" -A x64 -DMYSQL_DIR="%MYSQL_PATH%"
+    if %ERRORLEVEL% neq 0 (
+        echo [INFO] Trying MinGW Makefiles...
+        cmake .. -G "MinGW Makefiles" -DMYSQL_DIR="%MYSQL_PATH%"
+        if %ERRORLEVEL% neq 0 (
+            echo [ERROR] CMake configuration failed.
+            echo         Make sure Visual Studio or MinGW is installed.
+            cd ..
+            pause
+            exit /b 1
+        )
+    )
 )
 
 REM Build
 echo [INFO] Building...
 cmake --build . --config Release
 if %ERRORLEVEL% neq 0 (
-    echo [ERROR] Build failed.
+    echo [ERROR] Build failed. Check errors above.
     cd ..
     pause
     exit /b 1
@@ -67,6 +81,7 @@ cd ..
 REM Copy MySQL DLL
 if exist "%MYSQL_PATH%\lib\libmysql.dll" (
     echo [INFO] Copying libmysql.dll to bin/
+    if not exist bin mkdir bin
     copy "%MYSQL_PATH%\lib\libmysql.dll" bin\ >nul 2>nul
 )
 
@@ -91,8 +106,11 @@ echo  Output: bin\wow-emulator.exe
 echo.
 echo  Before running:
 echo    1. Install MySQL Server 8.0
-echo    2. Run: mysql -u root -p ^< sql\create_database.sql
-echo    3. Edit: bin\configs\worldserver.conf
-echo    4. Run:  bin\wow-emulator.exe
+echo    2. Run: mysql -u root -p ^< sql\01_schema.sql
+echo    3. Run: mysql -u root -p ^< sql\02_data_creatures.sql
+echo    4. Run: mysql -u root -p ^< sql\03_data_items.sql
+echo    5. Run: mysql -u root -p ^< sql\04_data_quests_spells_loot.sql
+echo    6. Edit: bin\configs\worldserver.conf
+echo    7. Run:  bin\wow-emulator.exe
 echo.
 pause
