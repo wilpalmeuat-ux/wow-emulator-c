@@ -2,6 +2,11 @@
    ║  Scanner implementation — tokenises .wss source text         ║
    ╚══════════════════════════════════════════════════════════════╝ */
 
+/* ── Windows compat ── */
+#ifdef _WIN32
+#define strdup _strdup
+#endif
+
 #include <scripting/wss_scanner.h>
 #include <string.h>
 #include <stdlib.h>
@@ -200,7 +205,7 @@ bool WssScanner_Next(WssScanner* s, WssToken* out) {
             _adv(s); // skip closing "
             buf[i] = 0;
             out->type = T_STRING;
-            out->data.str = strndup(buf, i);
+            out->data.str = strdup(buf);
             break;
         }
         default:

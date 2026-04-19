@@ -1,4 +1,7 @@
 /* WSS Value — tagged union implementation */
+#ifdef _WIN32
+#define strdup _strdup
+#endif
 #include <scripting/wss_value.h>
 #include <string.h>
 #include <stdlib.h>

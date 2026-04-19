@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define EMIT(c, line) \
+    do { WssChunk_Write(&comp->chunk, (uint8_t)(c), (line)); } while(0)
+#define EMIT_CONST(c, idx, line) \
+    do { EMIT((c), (line)); EMIT((uint8_t)((idx) & 0xFF), (line)); } while(0)
+
 static void advance(WssCompiler* comp) {
     comp->previous = comp->current;
     lex_next(&comp->lex, &comp->current);

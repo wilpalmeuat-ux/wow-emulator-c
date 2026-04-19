@@ -1,4 +1,7 @@
 /* WssVM — full stack-based bytecode VM implementation */
+#ifdef _WIN32
+#define strdup _strdup
+#endif
 #include "scripting/wss_vm.h"
 #include "scripting/wss_chunk.h"
 #include "scripting/wss_value.h"
