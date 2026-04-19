@@ -1,3 +1,4 @@
+/* wss_lexer.c — Lexer for WoW WSS scripting language */
 #include "scripting/wss_lexer.h"
 #include <string.h>
 #include <ctype.h>
@@ -23,10 +24,10 @@ static const char* _tok_names[] = {
 const char* tok_name(WssLexTokenType t) { return _tok_names[t]; }
 
 void WssToken_Init(WssToken* t, WssLexTokenType type, int line) {
-    t->text.text = "";
-    t->text.len = 0;
-    t->len = 0;
-    (void)line;
+    t->type = type;
+    t->lexeme[0] = '\0';
+    t->line = line;
+    t->col = 0;
 }
 
 static int _is_alpha(int c) { return isalpha(c) || c == '_'; }
@@ -80,20 +81,17 @@ void lex_init(Lexer* L, const char* src) {
 
 bool lex_next(Lexer* L, Token* out) {
     if (L->pos >= L->len) {
-        out->text.text = "";
-        out->text.len = 0;
-        out->len = 0;
+        WssToken_Init(out, TK_EOF, L->line);
         return false;
     }
-    const char* start = L->src + L->pos;
+
     int c = _cur(L);
 
     if (c == '\n') {
         L->pos++;
         L->line++;
-        out->text.text = start;
-        out->text.len = 1;
-        out->len = 1;
+        WssToken_Init(out, TK_NEWLINE, L->line);
+        out->lexeme[0] = '\n'; out->lexeme[1] = '\0';
         return true;
     }
 
@@ -102,9 +100,11 @@ bool lex_next(Lexer* L, Token* out) {
     if (c == '/' && _nxt(L) == '/') {
         const char* s = L->src + L->pos;
         while (L->pos < L->len && _cur(L) != '\n') L->pos++;
-        out->text.text = s;
-        out->text.len = L->src + L->pos - s;
-        out->len = out->text.len;
+        WssToken_Init(out, TK_COMMENT, L->line);
+        int len = (int)(L->src + L->pos - s);
+        if (len > 127) len = 127;
+        memcpy(out->lexeme, s, len);
+        out->lexeme[len] = '\0';
         return true;
     }
 
@@ -113,11 +113,12 @@ bool lex_next(Lexer* L, Token* out) {
         const char* s = L->src + L->pos;
         _adv(L);
         while (L->pos < L->len && _cur(L) != delim && _cur(L) != '\n') _adv(L);
-        const char* e = L->src + L->pos;
         if (_cur(L) == delim) _adv(L);
-        out->text.text = s;
-        out->text.len = L->src + L->pos - s;
-        out->len = out->text.len;
+        WssToken_Init(out, TK_STRING, L->line);
+        int len = (int)(L->src + L->pos - s);
+        if (len > 127) len = 127;
+        memcpy(out->lexeme, s, len);
+        out->lexeme[len] = '\0';
         return true;
     }
 
@@ -128,53 +129,65 @@ bool lex_next(Lexer* L, Token* out) {
             if (_cur(L) == '.') has_dot = 1;
             _adv(L);
         }
-        out->text.text = s;
-        out->text.len = L->src + L->pos - s;
-        out->len = out->text.len;
+        WssToken_Init(out, has_dot ? TK_FLOAT : TK_NUMBER, L->line);
+        int len = (int)(L->src + L->pos - s);
+        if (len > 127) len = 127;
+        memcpy(out->lexeme, s, len);
+        out->lexeme[len] = '\0';
         return true;
     }
 
     if (_is_alpha(c) || c == '_') {
         const char* s = L->src + L->pos;
         while (_is_alnum(_cur(L))) _adv(L);
-        int len = L->src + L->pos - s;
+        int len = (int)(L->src + L->pos - s);
         WssLexTokenType tt = _kw(s, len);
-        out->text.text = s;
-        out->text.len = len;
-        out->len = len;
+        WssToken_Init(out, tt, L->line);
+        if (len > 127) len = 127;
+        memcpy(out->lexeme, s, len);
+        out->lexeme[len] = '\0';
         return true;
     }
 
     _adv(L);
-    out->text.text = start;
-    out->text.len = 1;
-    out->len = 1;
+    WssToken_Init(out, TK_ERROR, L->line);
+    out->lexeme[0] = (char)c; out->lexeme[1] = '\0';
 
-    if (c == '{') return true;
-    if (c == '}') return true;
-    if (c == '(') return true;
-    if (c == ')') return true;
-    if (c == '[') return true;
-    if (c == ']') return true;
-    if (c == ',') return true;
-    if (c == '.') return true;
-    if (c == ':') return true;
-    if (c == ';') return true;
-    if (c == '|') return true;
-    if (c == '&') return true;
-    if (c == '@') return true;
-    if (c == '#') return true;
-    if (c == '$') return true;
-    if (c == '+') return true;
-    if (c == '-') { if (_cur(L) == '>') { out->text.text = start; out->text.len = 2; out->len = 2; _adv(L); } return true; }
-    if (c == '*') return true;
-    if (c == '/') return true;
-    if (c == '%') return true;
-    if (c == '^') return true;
-    if (c == '=') { if (_cur(L) == '=') { out->text.text = start; out->text.len = 2; out->len = 2; _adv(L); } return true; }
-    if (c == '!') { if (_cur(L) == '=') { out->text.text = start; out->text.len = 2; out->len = 2; _adv(L); } return true; }
-    if (c == '<') { if (_cur(L) == '=') { out->text.text = start; out->text.len = 2; out->len = 2; _adv(L); } return true; }
-    if (c == '>') { if (_cur(L) == '=') { out->text.text = start; out->text.len = 2; out->len = 2; _adv(L); } return true; }
+    if (c == '{') out->type = TK_LBRACE;
+    else if (c == '}') out->type = TK_RBRACE;
+    else if (c == '(') out->type = TK_LPAREN;
+    else if (c == ')') out->type = TK_RPAREN;
+    else if (c == '[') out->type = TK_LBRACKET;
+    else if (c == ']') out->type = TK_RBRACKET;
+    else if (c == ',') out->type = TK_COMMA;
+    else if (c == '.') out->type = TK_DOT;
+    else if (c == ':') out->type = TK_COLON;
+    else if (c == ';') out->type = TK_SEMICOLON;
+    else if (c == '|') out->type = TK_PIPE;
+    else if (c == '&') out->type = TK_AMP;
+    else if (c == '@') out->type = TK_AT;
+    else if (c == '#') out->type = TK_HASH;
+    else if (c == '$') out->type = TK_DOLLAR;
+    else if (c == '+') out->type = TK_PLUS;
+    else if (c == '*') out->type = TK_STAR;
+    else if (c == '/') out->type = TK_SLASH;
+    else if (c == '%') out->type = TK_PERCENT;
+    else if (c == '^') out->type = TK_XOR;
+    else if (c == '-') {
+        if (_cur(L) == '>') { _adv(L); out->type = TK_ARROW; out->lexeme[0] = '-'; out->lexeme[1] = '>'; out->lexeme[2] = '\0'; }
+        else out->type = TK_MINUS;
+    } else if (c == '=') {
+        if (_cur(L) == '=') { _adv(L); out->type = TK_EQ; out->lexeme[0] = '='; out->lexeme[1] = '='; out->lexeme[2] = '\0'; }
+        else out->type = TK_ASSIGN;
+    } else if (c == '!') {
+        if (_cur(L) == '=') { _adv(L); out->type = TK_NEQ; out->lexeme[0] = '!'; out->lexeme[1] = '='; out->lexeme[2] = '\0'; }
+    } else if (c == '<') {
+        if (_cur(L) == '=') { _adv(L); out->type = TK_LE; out->lexeme[0] = '<'; out->lexeme[1] = '='; out->lexeme[2] = '\0'; }
+        else out->type = TK_LT;
+    } else if (c == '>') {
+        if (_cur(L) == '=') { _adv(L); out->type = TK_GE; out->lexeme[0] = '>'; out->lexeme[1] = '='; out->lexeme[2] = '\0'; }
+        else out->type = TK_GT;
+    }
 
     return true;
 }
