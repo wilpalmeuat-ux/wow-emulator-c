@@ -62,6 +62,7 @@ set(SHARED_SOURCES
     src/shared/ByteBuffer.c
     src/shared/BigNumber.c
     src/shared/SRP6.c
+    src/shared/sha1.c
     src/shared/database.c
     src/shared/Config/Config.c
 )
@@ -77,6 +78,21 @@ set(WORLD_SOURCES
     src/worldserver/player.c
     src/worldserver/worldsocket.c
     src/worldserver/packets.c
+    src/worldserver/update_object.c
+    src/worldserver/spell_system.c
+    src/worldserver/combat_system.c
+    src/worldserver/item_system.c
+    src/worldserver/quest_system.c
+    src/worldserver/loot_system.c
+    src/worldserver/npc_ai.c
+    src/worldserver/grid_system.c
+    src/worldserver/guild_system.c
+    src/worldserver/group_system.c
+    src/worldserver/mail_system.c
+    src/worldserver/auction_system.c
+    src/worldserver/talent_system.c
+    src/worldserver/achievement_system.c
+    src/worldserver/weather_system.c
 )
 
 set(SCRIPTING_SOURCES
