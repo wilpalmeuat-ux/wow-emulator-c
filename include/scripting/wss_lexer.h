@@ -25,7 +25,7 @@ typedef enum {
 typedef WssLexTokenType TokenType;
 typedef WssLexTokenType WssTokenType;
 typedef struct { const char* text; int len; } StrView;
-typedef struct { StrView text; int len; } Token;
+typedef struct { WssLexTokenType type; char lexeme[128]; int line; int col; } Token;
 typedef Token WssToken;
 
 /* Token constructor — for scanner use */

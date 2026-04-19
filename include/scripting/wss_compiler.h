@@ -5,6 +5,7 @@
 #include <scripting/wss_scanner.h>
 #include <scripting/wss_objectstore.h>
 #include <scripting/wss_value.h>
+#include <scripting/wss_chunk.h>
 
 typedef enum {
     COMP_OK,

@@ -5,6 +5,7 @@
 #define WSS_CHUNK_H
 
 #include <stdint.h>
+#include <scripting/wss_value.h>
 
 typedef enum {
     OP_NOP,
@@ -29,10 +30,14 @@ typedef struct WssChunk {
     int        count;
     int        capacity;
     int*       lines;
+    WssValue*  constants;   /* constant pool for bytecode */
+    int        num_constants;
+    int        cap_constants;
 } WssChunk;
 
-void WssChunk_Init(WssChunk* c);
-void WssChunk_Write(WssChunk* c, uint8_t byte, int line);
-void WssChunk_Free(WssChunk* c);
+void  WssChunk_Init(WssChunk* c);
+void  WssChunk_Write(WssChunk* c, uint8_t byte, int line);
+int   WssChunk_AddConstant(WssChunk* c, WssValue v);
+void  WssChunk_Free(WssChunk* c);
 
 #endif
