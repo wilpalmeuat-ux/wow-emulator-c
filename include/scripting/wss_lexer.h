@@ -10,5 +10,6 @@ typedef struct { StrView text; int len; } Token;
 typedef struct Lexer { const char* src; size_t pos, len; int line; StrView cur; } Lexer;
 void lex_init(Lexer* L, const char* src);
 bool lex_next(Lexer* L, Token* out);
+WssToken WssLexer_NextToken(Lexer* L);
 const char* tok_name(WssLexTokenType t);
 #endif
