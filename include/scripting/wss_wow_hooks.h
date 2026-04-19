@@ -72,7 +72,7 @@ typedef struct {
     WssObjectStore  chunks;        /* name → compiled WssChunk* bytecode */
     WssObjectStore  constants;    /* shared constants pool */
     WssObjectStore  registry;     /* global variable store */
-    WssVM           vm;           /* shared VM for all scripts */
+    WSSState        vm;           /* shared VM for all scripts */
     char            last_error[512];
     int             tick_count;
 } WssScriptingSystem;

@@ -4,16 +4,16 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <scripting/wss_value.h>
 
-typedef enum { WSS_NIL=0, WSS_INT, WSS_FLOAT, WSS_STRING, WSS_BOOL, WSS_ARRAY, WSS_FUNCTION, WSS_CFUNCTION } WSSValueType;
+typedef enum {
+    WSS_NIL=0, WSS_INT, WSS_FLOAT, WSS_STRING, WSS_BOOL, WSS_ARRAY, WSS_FUNCTION, WSS_CFUNCTION
+} WSSValueType;
+
+/* WSSValue is defined in wss_value.h — this typedef is for forward reference only */
 typedef struct WSSValue WSSValue;
 typedef struct WSSArray WSSArray;
 typedef struct WSSFunction WSSFunction;
-
-struct WSSValue { WSSValueType type; union { int64_t i; double f; char* s; bool b; WSSArray* a; WSSFunction* fn; void* cfn; }; };
-struct WSSArray { WSSValue* items; size_t count, cap; };
-struct WSSFunction { char* name; char* src; void* vm; };
-typedef WSSValue (*WSSCFunction)(WSSState* S, WSSValue* args, int narg);
 
 /* ── VM state + result ── */
 typedef enum { RUN_OK=0, RUN_EXIT=1, RUN_ERROR=2 } WssResult;
