@@ -23,9 +23,13 @@ typedef enum {
 
 /* backward compat typedefs */
 typedef WssLexTokenType TokenType;
+typedef WssLexTokenType WssTokenType;
 typedef struct { const char* text; int len; } StrView;
 typedef struct { StrView text; int len; } Token;
 typedef Token WssToken;
+
+/* Token constructor — for scanner use */
+void WssToken_Init(WssToken* t, WssLexTokenType type, int line);
 
 typedef struct {
     const char* src;

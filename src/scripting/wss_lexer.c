@@ -22,6 +22,13 @@ static const char* _tok_names[] = {
 
 const char* tok_name(WssLexTokenType t) { return _tok_names[t]; }
 
+void WssToken_Init(WssToken* t, WssLexTokenType type, int line) {
+    t->text.text = "";
+    t->text.len = 0;
+    t->len = 0;
+    (void)line;
+}
+
 static int _is_alpha(int c) { return isalpha(c) || c == '_'; }
 static int _is_alnum(int c) { return isalnum(c) || c == '_'; }
 static int _cur(Lexer* L) { return L->pos < L->len ? L->src[L->pos] : 0; }
