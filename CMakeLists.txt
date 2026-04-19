@@ -64,6 +64,7 @@ set(SHARED_SOURCES
     src/shared/SRP6.c
     src/shared/sha1.c
     src/shared/database.c
+    src/shared/dbc_loader.c
     src/shared/Config/Config.c
 )
 
@@ -93,6 +94,14 @@ set(WORLD_SOURCES
     src/worldserver/talent_system.c
     src/worldserver/achievement_system.c
     src/worldserver/weather_system.c
+    src/worldserver/opcode_handlers.c
+    src/worldserver/battleground.c
+    src/worldserver/instance_system.c
+    src/worldserver/profession_system.c
+    src/worldserver/pet_system.c
+    src/worldserver/vehicle_system.c
+    src/worldserver/phasing_system.c
+    src/worldserver/anticheat.c
 )
 
 set(SCRIPTING_SOURCES
