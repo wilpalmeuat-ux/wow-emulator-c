@@ -1,7 +1,7 @@
 /* log.h -- Logging interface for the WoW emulator */
 #ifndef WOW_LOG_H
 #define WOW_LOG_H
-
+#include <stdio.h>  /* FILE must be defined before extern FILE* declaration */
 #include <stdarg.h>
 
 typedef enum { LOG_TRACE=0, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL } LogLevel;
