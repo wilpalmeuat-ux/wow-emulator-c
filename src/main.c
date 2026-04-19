@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
     dbCfg.host = cfg->dbHost;
     dbCfg.port = cfg->dbPort;
     dbCfg.user = cfg->dbUser;
-    dbCfg.password = cfg->dbPassword;
+    dbCfg.pass = cfg->dbPassword;
     dbCfg.database = cfg->dbDatabase;
 
     Database* db = database_create(&dbCfg);

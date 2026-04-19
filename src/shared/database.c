@@ -113,7 +113,7 @@ Database* database_create(DBConfig* cfg) {
     const char* host     = (cfg && cfg->host)     ? cfg->host     : "127.0.0.1";
     int         port     = (cfg && cfg->port)      ? cfg->port     : 3306;
     const char* user     = (cfg && cfg->user)      ? cfg->user     : "root";
-    const char* password = (cfg && cfg->password)  ? cfg->password : "";
+    const char* password = (cfg && cfg->pass)       ? cfg->pass     : "";
     const char* database = (cfg && cfg->database)  ? cfg->database : "wow_emulator";
 
     /* Try to connect without DB first to create it if missing */

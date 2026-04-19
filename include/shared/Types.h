@@ -8,6 +8,7 @@ typedef uint16_t uint16;
 typedef uint8_t  uint8;
 typedef int32_t  int32;
 typedef int64_t  int64;
+typedef uint64_t uint64;
 
 #define GUID_LOPART(x) ((uint32)((x) & 0xFFFFFFFFULL))
 #define GUID_HIPART(x) ((uint32)(((x) >> 32) & 0xFFFFFFFFULL))
