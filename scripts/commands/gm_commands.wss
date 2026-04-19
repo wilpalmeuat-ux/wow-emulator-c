@@ -1,0 +1,15 @@
+// =====================================================
+//  gm_commands.wss -- GM command extensions
+//  Add custom dot-commands handled by the script engine
+// =====================================================
+
+// Example: register a custom "funserver" command set
+onLogin gm_system {
+    log "GM command scripts loaded"
+}
+
+// Custom spawn command via script
+onSay spawn_custom {
+    spawn 9999 at 0 0 0 on map 0
+    broadcast "Custom creature spawned via WSS script!"
+}

@@ -1,0 +1,52 @@
+// =====================================================
+//  boss.wss -- World Boss behavior
+//  Shows how to script a raid-level encounter
+// =====================================================
+
+// World Boss spawn setup
+onSpawn World_Boss {
+    sethealth 9999999
+    setmaxhealth 9999999
+    setlevel 83
+    setfaction 14
+    setspeed 1.5
+    log "WORLD BOSS has spawned!"
+    broadcast "WARNING: A World Boss has appeared!"
+}
+
+// World Boss death
+onDeath World_Boss {
+    broadcast "The World Boss has been defeated! Glory to the victors!"
+    log "World Boss killed"
+}
+
+// World Boss gossip (if friendly faction set)
+onGossip World_Boss {
+    say "You dare approach me, mortal?"
+}
+
+// Kel'Thuzad encounter
+onSpawn KelThuzad {
+    sethealth 999999
+    setlevel 83
+    setfaction 21
+    log "Kel'Thuzad has entered the battlefield"
+}
+
+onDeath KelThuzad {
+    broadcast "Kel'Thuzad has been vanquished!"
+    log "Kel'Thuzad defeated"
+}
+
+// Portal Guardian
+onSpawn Portal_Guardian {
+    sethealth 150000
+    setlevel 80
+    setfaction 35
+    morph 17612
+    log "Portal Guardian activated"
+}
+
+onGossip Portal_Guardian {
+    say "Step through the portal if you dare."
+}

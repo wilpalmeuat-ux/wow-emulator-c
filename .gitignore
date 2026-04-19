@@ -1,1 +1,35 @@
-*.o *.obj *.a *.lib *.so *.dll *.exe *.pdb *.ilk *.exp *.ncb *.idb build/ Debug/ Release/ x64/ Win32/ wow-emulator worldserver authserver world auth .DS_Store Thumbs.db *~ *.tmp *.log *.stackdump core .vs/ .vscode/ *.code-workspace CMakeCache.txt CMakeFiles/ cmake_install.cmake Makefile.core *.cmake.in CMakeScripts/ *.db *.sqlite *.dbc *.dbcache
+# Build artifacts
+build/
+bin/
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.idb
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+*.sln
+*.vcxproj*
+CMakeSettings.json
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs
+*.log
+
+# MySQL data
+*.frm
+*.ibd
+*.MYD
+*.MYI
