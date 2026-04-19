@@ -5,6 +5,14 @@
 #include <scripting/wss_lexer.h>
 #include <stdint.h>
 
+/* Ensure TokenType / WssToken are defined (may already be from wss_lexer.h) */
+#ifndef TokenType
+typedef WssLexTokenType TokenType;
+#endif
+#ifndef WssToken
+typedef Token WssToken;
+#endif
+
 /* ── Scanner (tokeniser) ── */
 typedef struct WssScanner {
     const char* src;

@@ -21,11 +21,11 @@ typedef enum {
     TK_NEWLINE, TK_COMMENT
 } WssLexTokenType;
 
-/* backward compat */
+/* backward compat typedefs */
 typedef WssLexTokenType TokenType;
-
 typedef struct { const char* text; int len; } StrView;
 typedef struct { StrView text; int len; } Token;
+typedef Token WssToken;
 
 typedef struct {
     const char* src;
