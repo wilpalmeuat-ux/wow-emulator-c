@@ -70,7 +70,6 @@ void WssSystem_Delete(WssScriptingSystem* sys) {
 static WssChunk* compile_source(WssScriptingSystem* sys, const char* source, const char* name, char* err_buf, size_t err_size) {
     WssCompiler comp;
     WssCompiler_Init(&comp, source, name);
-    comp.constants = sys->constants;
     WssChunk* chunk = malloc(sizeof(WssChunk));
     WssChunk_Init(chunk);
     bool ok = WssCompiler_Run(&comp, chunk);
