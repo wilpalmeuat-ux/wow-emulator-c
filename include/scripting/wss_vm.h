@@ -4,33 +4,25 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <scripting/wss_value.h>
 
-typedef enum { WSS_NIL=0, WSS_INT, WSS_FLOAT, WSS_STRING, WSS_BOOL, WSS_ARRAY, WSS_FUNCTION, WSS_CFUNCTION } WSSValueType;
-typedef struct WSSValue WSSValue;
-typedef struct WSSArray WSSArray;
-typedef struct WSSFunction WSSFunction;
+/* WSSState and WSSValue are already defined in wss_value.h */
 
-struct WSSValue { WSSValueType type; union { int64_t i; double f; char* s; bool b; WSSArray* a; WSSFunction* fn; void* cfn; }; };
-struct WSSArray { WSSValue* items; size_t count, cap; };
-struct WSSFunction { char* name; char* src; void* vm; };
-typedef WSSValue (*WSSCFunction)(WSSState* S, WSSValue* args, int narg);
-
-/* ── VM state + result ── */
 typedef enum { RUN_OK=0, RUN_EXIT=1, RUN_ERROR=2 } WssResult;
 
 typedef struct WssChunk WssChunk; /* forward */
 
 typedef struct WSSState {
-    WSSValue* globals;
+    WssValue* globals;
     size_t    global_cap;
-    WSSValue* locals;
+    WssValue* locals;
     size_t    local_cap;
-    WSSValue  retval;
+    WssValue  retval;
     bool      has_retval;
     WSSCFunction* cfuncs;
     const char** cfn_names;
     size_t    cfn_cap, cfn_count;
-    WSSValue  stack[256];
+    WssValue  stack[256];
     int       top;
     int       frame_count;
     uint8_t*  ip;
@@ -41,21 +33,21 @@ typedef struct WSSState {
 WSSState* wss_new(void);
 void       wss_free(WSSState* S);
 void       wss_register_cfn(WSSState* S, const char* name, WSSCFunction fn);
-void       wss_set(WSSState* S, const char* name, size_t name_len, WSSValue v, bool local);
-WSSValue   wss_get(WSSState* S, const char* name, size_t name_len);
-bool       wss_call(WSSState* S, const char* name, size_t name_len, WSSValue* args, int narg);
-void       wss_return(WSSState* S, WSSValue v);
-WSSValue   wss_mk_nil(void);
-WSSValue   wss_mk_int(int64_t v);
-WSSValue   wss_mk_float(double v);
-WSSValue   wss_mk_string(const char* s);
-WSSValue   wss_mk_stringf(const char* fmt, ...);
-WSSValue   wss_mk_bool(bool v);
-WSSValue   wss_mk_array(WSSArray* a);
-int64_t    wss_to_int(WSSValue v);
-double     wss_to_float(WSSValue v);
-bool       wss_to_bool(WSSValue v);
-const char* wss_to_str(WSSValue v);
+void       wss_set(WSSState* S, const char* name, size_t name_len, WssValue v, bool local);
+WssValue   wss_get(WSSState* S, const char* name, size_t name_len);
+bool       wss_call(WSSState* S, const char* name, size_t name_len, WssValue* args, int narg);
+void       wss_return(WSSState* S, WssValue v);
+WssValue   wss_mk_nil(void);
+WssValue   wss_mk_int(int64_t v);
+WssValue   wss_mk_float(double v);
+WssValue   wss_mk_string(const char* s);
+WssValue   wss_mk_stringf(const char* fmt, ...);
+WssValue   wss_mk_bool(bool v);
+WssValue   wss_mk_array(void* a);
+int64_t    wss_to_int(WssValue v);
+double     wss_to_float(WssValue v);
+bool       wss_to_bool(WssValue v);
+const char* wss_to_str(WssValue v);
 void       wss_dump(WSSState* S);
 bool       wss_load_script(WSSState* S, const char* path);
 void       wss_call_script(WSSState* S, const char* src);

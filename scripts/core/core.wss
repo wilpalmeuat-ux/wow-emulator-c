@@ -1,0 +1,39 @@
+// =====================================================
+//  core.wss -- Core server event handlers
+//  This is the main WSS script loaded at startup.
+//  All game logic is driven by word/statement scripts.
+// =====================================================
+
+// ---------------------------------------------------
+//  Player Login Event
+//  Fired when a player enters the world
+// ---------------------------------------------------
+onLogin player {
+    broadcast "A hero has entered the world!"
+    log "Player logged in"
+}
+
+// ---------------------------------------------------
+//  Player Logout Event
+// ---------------------------------------------------
+onLogout player {
+    broadcast "A hero has departed."
+    log "Player logged out"
+}
+
+// ---------------------------------------------------
+//  Player Chat Event
+//  Fired when a player says something in chat
+// ---------------------------------------------------
+onSay player {
+    log "Player said something in chat"
+}
+
+// ---------------------------------------------------
+//  Server Startup
+//  Spawn some demo creatures at well-known locations
+// ---------------------------------------------------
+onSpawn server {
+    log "Core scripts loaded successfully"
+    log "WSS Word/Statement Scripting Engine active"
+}

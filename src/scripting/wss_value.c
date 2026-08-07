@@ -1,5 +1,7 @@
-/* WSS Value implementation */
-#define _POSIX_C_SOURCE 200809L
+/* WSS Value — tagged union implementation */
+#ifdef _WIN32
+#define strdup _strdup
+#endif
 #include <scripting/wss_value.h>
 #include <string.h>
 #include <stdlib.h>
@@ -8,7 +10,10 @@
 void WssValue_Init(WssValue* v) { memset(v, 0, sizeof(*v)); }
 
 void WssValue_Delete(WssValue* v) {
-    if (v->type == VAL_STRING && v->data.as_string) { free(v->data.as_string); v->data.as_string = NULL; }
+    if (v->type == VAL_STRING && v->data.as_string) {
+        free(v->data.as_string);
+        v->data.as_string = NULL;
+    }
     v->type = VAL_NULL;
 }
 
@@ -38,8 +43,10 @@ bool WssValue_IsTrue(const WssValue* v) {
 
 bool WssValue_IsEqual(const WssValue* a, const WssValue* b) {
     if (a->type != b->type) {
-        if (a->type == VAL_INT && b->type == VAL_DBL) return (double)a->data.as_int == b->data.as_dbl;
-        if (a->type == VAL_DBL && b->type == VAL_INT) return a->data.as_dbl == (double)b->data.as_int;
+        if (a->type == VAL_INT && b->type == VAL_DBL)
+            return (double)a->data.as_int == b->data.as_dbl;
+        if (a->type == VAL_DBL && b->type == VAL_INT)
+            return a->data.as_dbl == (double)b->data.as_int;
         return false;
     }
     switch (a->type) {
@@ -53,12 +60,12 @@ bool WssValue_IsEqual(const WssValue* a, const WssValue* b) {
     }
 }
 
-WssValue WssValue_Null(void)   { WssValue v = {VAL_NULL,  {0}}; return v; }
-WssValue WssValue_Bool(bool b) { WssValue v = {VAL_BOOL,  {.as_bool = b}}; return v; }
-WssValue WssValue_Int(int64_t i)    { WssValue v = {VAL_INT,   {.as_int = i}}; return v; }
-WssValue WssValue_Double(double d)  { WssValue v = {VAL_DBL,   {.as_dbl = d}}; return v; }
+WssValue WssValue_Null(void)    { WssValue v = {VAL_NULL,  {0}}; return v; }
+WssValue WssValue_Bool(bool b)  { WssValue v = {VAL_BOOL,  {.as_bool = b}}; return v; }
+WssValue WssValue_Int(int64_t i) { WssValue v = {VAL_INT,   {.as_int = i}}; return v; }
+WssValue WssValue_Double(double d) { WssValue v = {VAL_DBL, {.as_dbl = d}}; return v; }
 WssValue WssValue_String(const char* s) { WssValue v = {VAL_STRING, {.as_string = s ? strdup(s) : NULL}}; return v; }
-WssValue WssValue_Object(void* obj)  { WssValue v = {VAL_OBJECT, {.as_object = obj}}; return v; }
+WssValue WssValue_Object(void* obj) { WssValue v = {VAL_OBJECT, {.as_object = obj}}; return v; }
 
 const char* WssValue_TypeName(WssValueType t) {
     switch (t) {
@@ -71,4 +78,15 @@ const char* WssValue_TypeName(WssValueType t) {
         default: return "?";
     }
 }
-const char* WssValue_TypeString(WssValueType t) { (void)t; return "?"; }
+
+const char* WssValue_TypeString(WssValueType t) {
+    switch (t) {
+        case VAL_NULL:  return "null";
+        case VAL_BOOL:  return "bool";
+        case VAL_INT:   return "int";
+        case VAL_DBL:   return "double";
+        case VAL_STRING: return "string";
+        case VAL_OBJECT: return "object";
+        default: return "?";
+    }
+}

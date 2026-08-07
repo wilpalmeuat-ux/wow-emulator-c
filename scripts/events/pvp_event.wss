@@ -1,0 +1,18 @@
+// =====================================================
+//  pvp_event.wss -- PvP Event scripting example
+//  Demonstrates timers, countdowns, and broadcasts
+// =====================================================
+
+// PvP event announcements
+onTimer pvp_announce {
+    broadcast "PvP Arena event starts in 5 minutes!"
+    broadcast "Head to Gurubashi Arena to participate!"
+    countdown 300 "PvP Event"
+}
+
+// When the event starts
+onSpawn pvp_arena {
+    broadcast "=== PVP ARENA EVENT HAS BEGUN ==="
+    broadcast "Last player standing wins!"
+    log "PvP arena event started"
+}

@@ -22,9 +22,9 @@ typedef uint8_t  uint8;
 #define GUID_LOPART(x) ((uint32)((x) & 0xFFFFFFFFULL))
 
 /* ── Token types ── */
-typedef enum { T_WORD, T_STRING, T_NUMBER, T_INT, T_LBRACE, T_RBRACE, T_SEMICOLON, T_EOF } TokenType;
+typedef enum { T_WORD, T_STRING, T_NUMBER, T_INT, T_LBRACE, T_RBRACE, T_SEMICOLON, T_EOF } WssEngineTokenType;
 
-typedef struct { TokenType type; char text[MAX_TOKEN_LEN]; int64_t ival; double fval; int line; } Token;
+typedef struct { WssEngineTokenType type; char text[MAX_TOKEN_LEN]; int64_t ival; double fval; int line; } Token;
 
 /* ── Forward declarations ── */
 typedef struct ScriptEngine    ScriptEngine;

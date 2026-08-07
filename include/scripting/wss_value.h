@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 typedef enum {
     VAL_NULL,
@@ -26,6 +27,9 @@ typedef struct WssValue {
         void*       as_object;
     } data;
 } WssValue;
+
+/* WSSCFunction — C function callable from WSS scripts */
+typedef WssValue (*WSSCFunction)(void* S, WssValue* args, int narg);
 
 void WssValue_Init(WssValue* v);
 void WssValue_Delete(WssValue* v);

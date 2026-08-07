@@ -1,0 +1,35 @@
+// =====================================================
+//  guard.wss -- City guard NPC behavior
+//  Demonstrates creature event scripting with WSS
+// =====================================================
+
+// When a guard spawns, set it up
+onSpawn Stormwind_Guard {
+    sethealth 50000
+    setlevel 60
+    setfaction 11
+    log "Stormwind Guard spawned and ready"
+}
+
+// When a player talks to a guard
+onGossip Stormwind_Guard {
+    say "Greetings, citizen. Keep the peace."
+}
+
+// When a guard dies
+onDeath Stormwind_Guard {
+    log "A Stormwind Guard has fallen!"
+    broadcast "A city guard has been slain!"
+}
+
+// Orgrimmar Grunt behavior
+onSpawn Orgrimmar_Grunt {
+    sethealth 45000
+    setlevel 60
+    setfaction 29
+    log "Orgrimmar Grunt spawned"
+}
+
+onGossip Orgrimmar_Grunt {
+    say "For the Horde!"
+}

@@ -1,0 +1,11 @@
+// =====================================================
+//  welcome.wss -- Welcome message system
+//  Sends greetings to players when they log in
+// =====================================================
+
+// Show a welcome message on login
+onLogin player {
+    broadcast "Welcome to WoW 3.3.5a Private Server!"
+    broadcast "Type .help for available commands."
+    broadcast "Enjoy your stay!"
+}

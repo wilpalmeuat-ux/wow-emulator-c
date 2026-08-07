@@ -2,6 +2,11 @@
 #define BYTEBUFFER_H
 
 #include "Types.h"
+#include <stdbool.h>
+
+#ifndef MIN
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#endif
 
 typedef struct {
     uint8*  data;

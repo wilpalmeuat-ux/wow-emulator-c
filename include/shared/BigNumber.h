@@ -2,6 +2,11 @@
 #define BIGNUM_H
 
 #include "Types.h"
+#include <stdbool.h>
+
+#ifndef uint64
+typedef uint64_t uint64;
+#endif
 
 typedef struct {
     uint32 data[32];

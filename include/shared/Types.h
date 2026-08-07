@@ -8,6 +8,7 @@ typedef uint16_t uint16;
 typedef uint8_t  uint8;
 typedef int32_t  int32;
 typedef int64_t  int64;
+typedef uint64_t uint64;
 
 #define GUID_LOPART(x) ((uint32)((x) & 0xFFFFFFFFULL))
 #define GUID_HIPART(x) ((uint32)(((x) >> 32) & 0xFFFFFFFFULL))
@@ -47,4 +48,4 @@ typedef int64_t  int64;
 #define OPCODE_SMSG_MESSAGECHAT          0x00A8
 #define OPCODE_SMSG_UPDATEOBJECT         0x00A9
 #define OPCODE_CMSG_AUTOSTORE_BAG_ITEM    0x00BE
-#define OPCODE_CMSG_LOGOUT_COMPLETE       0x00DC
+/* duplicate removed — keep only 0x00DD above */

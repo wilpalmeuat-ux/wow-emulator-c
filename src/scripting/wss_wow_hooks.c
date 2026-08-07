@@ -70,7 +70,6 @@ void WssSystem_Delete(WssScriptingSystem* sys) {
 static WssChunk* compile_source(WssScriptingSystem* sys, const char* source, const char* name, char* err_buf, size_t err_size) {
     WssCompiler comp;
     WssCompiler_Init(&comp, source, name);
-    comp.constants = sys->constants;
     WssChunk* chunk = malloc(sizeof(WssChunk));
     WssChunk_Init(chunk);
     bool ok = WssCompiler_Run(&comp, chunk);
@@ -92,13 +91,11 @@ bool WssSystem_LoadScript(WssScriptingSystem* sys, const char* name, const char*
         snprintf(sys->last_error, sizeof(sys->last_error), "%s", err);
         return false;
     }
-    /* Store compiled chunk */
-    WssValue key_val = WssValue_String(name);
-    WssObjectStore_Set(&sys->chunks, name, &(WssValue){VAL_OBJECT, {.as_object = chunk}});
-    /* Also expose functions in globals */
-    WssValue null_val = {VAL_NULL, {0}};
-    WssObjectStore_Set(&sys->vm.globals, name, &null_val);
+    /* Store compiled chunk in the chunks store */
+    WssValue chunk_val = WssValue_Object(chunk);
+    WssObjectStore_Set(&sys->chunks, name, &chunk_val);
     printf("[WSS] Loaded script: %s\n", name);
+    (void)sys;
     return true;
 }
 
